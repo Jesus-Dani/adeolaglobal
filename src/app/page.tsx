@@ -5,7 +5,7 @@ import { HairlineDivider } from "@/components/hairline-divider";
 export default function Home() {
   return (
     <section className="bg-white">
-      <div className="grid lg:min-h-[calc(100vh-100px)] lg:grid-cols-2">
+      <div className="grid lg:min-h-[calc(100vh_-_100px)] lg:grid-cols-2">
         <div className="relative order-1 h-[70vh] lg:h-auto lg:order-2">
           <Image
             src="/images/hero-lifestyle.jpg"
