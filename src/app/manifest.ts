@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "ADEOLA Global Ltd",
     short_name: "ADEOLA",
-    description: "Nature. Beauty. Creativity. — premium hair/skincare, handmade crafts, and gifts.",
+    description: "Premium hair/skincare, handmade crafts, and gifts. Nature. Beauty. Creativity.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

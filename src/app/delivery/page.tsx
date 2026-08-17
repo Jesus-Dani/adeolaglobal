@@ -12,7 +12,7 @@ export default function DeliveryPage() {
       <HairlineDivider className="mt-4 max-w-40" />
       <p className="mt-6 text-body-l text-charcoal">
         This page is a placeholder. Delivery details are currently arranged directly with each
-        customer after checkout — full delivery information will be published here before launch.
+        customer after checkout. Full delivery information will be published here before launch.
       </p>
     </div>
   );

@@ -29,7 +29,7 @@ export default async function AccountPage() {
         <dl className="space-y-3">
           <div className="flex justify-between text-body-m">
             <dt className="text-muted-foreground">Name</dt>
-            <dd className="text-charcoal">{profile?.name || "—"}</dd>
+            <dd className="text-charcoal">{profile?.name || "Not provided"}</dd>
           </div>
           <div className="flex justify-between text-body-m">
             <dt className="text-muted-foreground">Email</dt>
@@ -37,7 +37,7 @@ export default async function AccountPage() {
           </div>
           <div className="flex justify-between text-body-m">
             <dt className="text-muted-foreground">Phone</dt>
-            <dd className="text-charcoal">{profile?.phone || "—"}</dd>
+            <dd className="text-charcoal">{profile?.phone || "Not provided"}</dd>
           </div>
         </dl>
         <div className="mt-6 flex flex-wrap gap-3">
