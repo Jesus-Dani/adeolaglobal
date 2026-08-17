@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Search, User, Heart } from "lucide-react";
+import { User } from "lucide-react";
 import { AnnouncementBar } from "./announcement-bar";
 import { MobileNav } from "./mobile-nav";
 import { CartDrawer } from "./cart-drawer";
+import { HeaderSearch, HeaderSearchTrigger } from "./header-search";
+import { WishlistButton } from "./wishlist-button";
 import { HairlineDivider } from "@/components/hairline-divider";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { NAV_LINKS } from "./nav-links";
 
@@ -46,27 +47,18 @@ export function SiteHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-1 sm:gap-2">
-          <div className="relative hidden sm:block">
-            <Search
-              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-              strokeWidth={1.5}
-            />
-            <Input
-              type="search"
-              placeholder="Search products..."
-              className="w-40 pl-9 lg:w-64"
-              aria-label="Search products"
-            />
-          </div>
-          <Button variant="ghost" size="icon" aria-label="Search" className="sm:hidden">
-            <Search strokeWidth={1.5} />
-          </Button>
-          <Button variant="ghost" size="icon" aria-label="Account">
+          <HeaderSearch className="hidden sm:block" />
+          <HeaderSearchTrigger />
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Account"
+            nativeButton={false}
+            render={<Link href="/account" />}
+          >
             <User strokeWidth={1.5} />
           </Button>
-          <Button variant="ghost" size="icon" aria-label="Wishlist">
-            <Heart strokeWidth={1.5} />
-          </Button>
+          <WishlistButton />
           <CartDrawer />
         </div>
       </div>

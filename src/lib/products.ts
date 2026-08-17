@@ -1,5 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Category, PublicProduct, ProductVariant } from "@/lib/supabase/types";
+import type { Category } from "@/lib/supabase/types";
+import { isOutOfStock, type ProductWithVariants } from "@/lib/product-helpers";
+
+export { isOutOfStock, type ProductWithVariants };
 
 // Explicit column list — never `select('*')`. cost_price is admin-only (see
 // the Phase 1 migration's column-privilege revoke); a storefront query for
@@ -8,13 +11,6 @@ const PRODUCT_COLUMNS =
   "id, category_id, name, slug, description, base_price, images, status, is_bestseller, is_new, created_at, updated_at";
 
 const VARIANT_COLUMNS = "id, size, colour, material, style, sku, price_override, stock_count";
-
-export type ProductWithVariants = PublicProduct & {
-  product_variants: Pick<
-    ProductVariant,
-    "id" | "size" | "colour" | "material" | "style" | "sku" | "price_override" | "stock_count"
-  >[];
-};
 
 export interface GetProductsParams {
   /** Category slug. */
@@ -99,12 +95,4 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
 
   if (error) throw error;
   return data;
-}
-
-/** A product is out of stock when every variant is (or it has none at all). */
-export function isOutOfStock(product: Pick<ProductWithVariants, "product_variants">): boolean {
-  return (
-    product.product_variants.length === 0 ||
-    product.product_variants.every((v) => v.stock_count <= 0)
-  );
 }
