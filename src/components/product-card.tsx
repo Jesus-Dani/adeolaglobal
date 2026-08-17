@@ -85,7 +85,7 @@ export function ProductCard({ product }: { product: ProductWithVariants }) {
               price: product.base_price,
             })
           }
-          className="absolute top-2 right-2 flex size-8 items-center justify-center rounded-full bg-white/90 shadow-sm transition-colors hover:bg-white"
+          className="absolute top-2 right-2 flex size-8 items-center justify-center bg-white/90 shadow-sm transition-colors hover:bg-white"
         >
           <Heart
             className={cn("size-4 transition-colors", isSaved ? "fill-plum text-plum" : "text-charcoal")}
@@ -113,7 +113,7 @@ export function ProductCard({ product }: { product: ProductWithVariants }) {
         ) : (
           <Link
             href={`/shop/${product.slug}`}
-            className="mt-auto flex h-8 w-full items-center justify-center rounded-lg bg-primary text-label text-primary-foreground uppercase tracking-wide hover:bg-primary/80"
+            className="mt-auto flex h-8 w-full items-center justify-center bg-primary text-label text-primary-foreground uppercase tracking-wide hover:bg-primary/80"
           >
             Select Options
           </Link>

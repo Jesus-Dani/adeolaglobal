@@ -47,7 +47,7 @@ export default function WishlistPage() {
                   type="button"
                   aria-label="Remove from wishlist"
                   onClick={() => remove(item.productId)}
-                  className="absolute top-2 right-2 flex size-8 items-center justify-center rounded-full bg-white/90 shadow-sm hover:bg-white"
+                  className="absolute top-2 right-2 flex size-8 items-center justify-center bg-white/90 shadow-sm hover:bg-white"
                 >
                   <X className="size-4 text-charcoal" strokeWidth={1.5} />
                 </button>

@@ -81,7 +81,7 @@ export function CartDrawer() {
                           type="button"
                           aria-label="Decrease quantity"
                           onClick={() => setQuantity(item.variantId, item.quantity - 1)}
-                          className="flex size-6 items-center justify-center rounded-md border border-border hover:bg-muted"
+                          className="flex size-6 items-center justify-center border border-border hover:bg-muted"
                         >
                           <Minus className="size-3" strokeWidth={1.5} />
                         </button>
@@ -91,7 +91,7 @@ export function CartDrawer() {
                           aria-label="Increase quantity"
                           disabled={item.quantity >= item.stockCount}
                           onClick={() => setQuantity(item.variantId, item.quantity + 1)}
-                          className="flex size-6 items-center justify-center rounded-md border border-border hover:bg-muted disabled:opacity-40"
+                          className="flex size-6 items-center justify-center border border-border hover:bg-muted disabled:opacity-40"
                         >
                           <Plus className="size-3" strokeWidth={1.5} />
                         </button>

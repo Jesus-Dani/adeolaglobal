@@ -1,8 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
 import { HairlineDivider } from "@/components/hairline-divider";
-import { cn } from "@/lib/utils";
 
 export default function Home() {
   return (
@@ -14,34 +12,32 @@ export default function Home() {
           fill
           priority
           sizes="100vw"
-          className="object-cover opacity-25"
+          className="object-cover"
         />
       </div>
 
-      <div className="relative mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 sm:py-28 lg:py-36">
-        <p className="text-label font-semibold tracking-wide text-gold uppercase">
-          Quality Care. Made For You.
-        </p>
-        <h1 className="mt-3 font-display text-display-xl text-deep-plum">
+      <div
+        className="relative mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 sm:py-28 lg:py-36"
+        style={{ filter: "drop-shadow(0 1px 3px rgba(255,255,255,0.95)) drop-shadow(0 2px 16px rgba(255,255,255,0.85))" }}
+      >
+        <h1 className="font-display text-display-xl text-deep-plum">
           Nature. Beauty. <em className="italic">Creativity.</em>
         </h1>
         <p className="mx-auto mt-4 max-w-md text-body-l text-charcoal">
           Premium hair and skincare, handmade crafts, unique gifts and more. Everything you need
           to look good, feel good and live beautifully.
         </p>
-        <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
           <Link
             href="/shop"
-            className={cn(buttonVariants({ size: "lg" }), "uppercase text-label tracking-wide")}
+            className="text-label font-semibold uppercase tracking-wide text-plum underline-offset-4 hover:underline"
           >
             Shop Now
           </Link>
+          <span className="h-4 w-px bg-charcoal/30" aria-hidden="true" />
           <Link
             href="/categories"
-            className={cn(
-              buttonVariants({ variant: "outline", size: "lg" }),
-              "border-plum bg-white/70 text-plum uppercase text-label tracking-wide hover:bg-white",
-            )}
+            className="text-label font-semibold uppercase tracking-wide text-deep-plum underline-offset-4 hover:underline"
           >
             Explore Categories
           </Link>

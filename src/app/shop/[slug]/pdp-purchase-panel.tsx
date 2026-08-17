@@ -75,7 +75,7 @@ export function PdpPurchasePanel({ product }: { product: ProductWithVariants }) 
                   onClick={() => setSelection((s) => ({ ...s, [attr]: value }))}
                   aria-pressed={selected}
                   className={cn(
-                    "rounded-lg border px-3 py-1.5 text-body-s transition-colors",
+                    "border px-3 py-1.5 text-body-s transition-colors",
                     selected
                       ? "border-plum bg-plum text-white"
                       : "border-border bg-white text-charcoal hover:border-plum",
@@ -98,12 +98,12 @@ export function PdpPurchasePanel({ product }: { product: ProductWithVariants }) 
       )}
 
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-3 rounded-lg border border-border px-2 py-1">
+        <div className="flex items-center gap-3 border border-border px-2 py-1">
           <button
             type="button"
             aria-label="Decrease quantity"
             onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-            className="flex size-7 items-center justify-center rounded-md hover:bg-muted"
+            className="flex size-7 items-center justify-center hover:bg-muted"
           >
             <Minus className="size-3.5" strokeWidth={1.5} />
           </button>
@@ -113,7 +113,7 @@ export function PdpPurchasePanel({ product }: { product: ProductWithVariants }) 
             aria-label="Increase quantity"
             disabled={!selectedVariant || quantity >= selectedVariant.stock_count}
             onClick={() => setQuantity((q) => q + 1)}
-            className="flex size-7 items-center justify-center rounded-md hover:bg-muted disabled:opacity-40"
+            className="flex size-7 items-center justify-center hover:bg-muted disabled:opacity-40"
           >
             <Plus className="size-3.5" strokeWidth={1.5} />
           </button>
@@ -142,7 +142,7 @@ export function PdpPurchasePanel({ product }: { product: ProductWithVariants }) 
               price: product.base_price,
             })
           }
-          className="flex size-11 shrink-0 items-center justify-center rounded-lg border border-border hover:border-plum"
+          className="flex size-11 shrink-0 items-center justify-center border border-border hover:border-plum"
         >
           <Heart className={cn("size-5", isSaved ? "fill-plum text-plum" : "text-charcoal")} strokeWidth={1.5} />
         </button>
