@@ -31,7 +31,7 @@ export function MobileNav() {
               alt=""
               width={28}
               height={28}
-              className="rounded-full"
+              className="size-7 rounded-full"
             />
             ADEOLA
           </SheetTitle>
