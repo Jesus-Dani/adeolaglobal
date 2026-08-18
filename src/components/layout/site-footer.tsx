@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Gift, Leaf, MessageCircle } from "lucide-react";
+import { Leaf, MessageCircle } from "lucide-react";
 import { HairlineDivider } from "@/components/hairline-divider";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -7,11 +7,6 @@ import { siteConfig, whatsappHref } from "@/lib/site-config";
 import { NAV_LINKS } from "./nav-links";
 
 const PROMO_ITEMS = [
-  {
-    icon: Gift,
-    title: "Looking for the perfect gift?",
-    body: "Thoughtfully curated gift boxes for every occasion.",
-  },
   {
     icon: Leaf,
     title: "Sustainable & Ethical",
@@ -22,7 +17,7 @@ const PROMO_ITEMS = [
 export function SiteFooter() {
   return (
     <footer className="mt-auto bg-deep-plum text-white">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:grid-cols-3 sm:px-6 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:grid-cols-2 sm:px-6 lg:px-8">
         {PROMO_ITEMS.map(({ icon: Icon, title, body }) => (
           <div key={title} className="flex items-start gap-3">
             <Icon className="size-6 shrink-0 text-gold" strokeWidth={1.5} aria-hidden="true" />
