@@ -27,10 +27,6 @@ export default function Home() {
           <h1 className="font-display text-display-xl text-deep-plum">
             Nature. Beauty. <em className="italic">Creativity.</em>
           </h1>
-          <p className="mt-4 text-body-l text-charcoal">
-            Premium hair and skincare, handmade crafts, unique gifts and more. Everything you need
-            to look good, feel good and live beautifully.
-          </p>
           <div className="mt-6 flex flex-wrap items-center gap-4">
             <Link
               href="/shop"
