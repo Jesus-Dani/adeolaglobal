@@ -4,28 +4,34 @@ import { HairlineDivider } from "@/components/hairline-divider";
 
 export default function Home() {
   return (
-    <section className="bg-white">
-      <div className="grid lg:min-h-[calc(100vh_-_100px)] lg:grid-cols-2">
-        <div className="relative order-1 h-[70vh] lg:h-auto lg:order-2">
-          <Image
-            src="/images/hero-lifestyle.jpg"
-            alt="A woman smiling outdoors next to ADEOLA Global's Rosemary Hair Growth Oil bottles"
-            fill
-            priority
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            className="object-cover"
-          />
-        </div>
+    <section className="relative overflow-hidden bg-soft-lilac lg:min-h-[calc(100vh_-_100px)]">
+      <div className="relative h-[60vh] lg:absolute lg:inset-0 lg:h-auto">
+        <Image
+          src="/images/hero-lifestyle.jpg"
+          alt="A woman smiling outdoors next to ADEOLA Global's Rosemary Hair Growth Oil bottles"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+      </div>
 
-        <div className="order-2 flex flex-col justify-center bg-soft-lilac px-4 py-16 text-center sm:px-6 lg:order-1 lg:px-16 lg:py-0 lg:text-left">
+      <div className="relative flex flex-col justify-center px-4 py-10 sm:px-6 lg:min-h-[calc(100vh_-_100px)] lg:items-start lg:justify-start lg:px-16 lg:py-0 lg:pt-28">
+        <div
+          className="max-w-sm"
+          style={{
+            filter:
+              "drop-shadow(0 1px 3px rgba(255,255,255,0.95)) drop-shadow(0 2px 16px rgba(255,255,255,0.9))",
+          }}
+        >
           <h1 className="font-display text-display-xl text-deep-plum">
             Nature. Beauty. <em className="italic">Creativity.</em>
           </h1>
-          <p className="mx-auto mt-4 max-w-md text-body-l text-charcoal lg:mx-0">
+          <p className="mt-4 text-body-l text-charcoal">
             Premium hair and skincare, handmade crafts, unique gifts and more. Everything you need
             to look good, feel good and live beautifully.
           </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
+          <div className="mt-6 flex flex-wrap items-center gap-4">
             <Link
               href="/shop"
               className="text-label font-semibold uppercase tracking-wide text-plum underline-offset-4 hover:underline"
@@ -40,7 +46,7 @@ export default function Home() {
               Explore Categories
             </Link>
           </div>
-          <HairlineDivider className="mx-auto mt-8 max-w-40 lg:mx-0" />
+          <HairlineDivider className="mt-8 max-w-40" />
         </div>
       </div>
     </section>
