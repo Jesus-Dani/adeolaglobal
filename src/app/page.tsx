@@ -7,7 +7,7 @@ export default function Home() {
     <section className="relative overflow-hidden bg-soft-lilac lg:min-h-[calc(100vh_-_100px)]">
       <div className="relative h-[60vh] lg:absolute lg:inset-0 lg:h-auto">
         <Image
-          src="/images/hero-lifestyle.jpg"
+          src="/images/hero-banner.jpg"
           alt="A woman smiling outdoors next to ADEOLA Global's Rosemary Hair Growth Oil bottles"
           fill
           priority
