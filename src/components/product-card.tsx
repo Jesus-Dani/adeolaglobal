@@ -41,7 +41,7 @@ export function ProductCard({ product }: { product: ProductWithVariants }) {
   return (
     <div className="group flex flex-col overflow-hidden rounded-xl border border-border bg-white transition-shadow hover:shadow-md">
       <div className="relative aspect-square overflow-hidden bg-soft-lilac">
-        <Link href={`/shop/${product.slug}`} className="block h-full w-full">
+        <Link href={`/shop/${product.slug}`} className="relative block h-full w-full">
           {image ? (
             <Image
               src={image}

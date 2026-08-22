@@ -119,8 +119,19 @@ export function CartDrawer() {
                 nativeButton={false}
                 render={
                   <Link
+                    href="/checkout"
+                    className={cn(buttonVariants(), "mt-3 w-full uppercase text-label tracking-wide")}
+                  />
+                }
+              >
+                Checkout
+              </SheetClose>
+              <SheetClose
+                nativeButton={false}
+                render={
+                  <Link
                     href="/shop"
-                    className={cn(buttonVariants({ variant: "outline" }), "mt-3 w-full uppercase text-label tracking-wide")}
+                    className={cn(buttonVariants({ variant: "outline" }), "mt-2 w-full uppercase text-label tracking-wide")}
                   />
                 }
               >

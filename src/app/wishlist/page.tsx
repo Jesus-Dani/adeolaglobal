@@ -32,7 +32,7 @@ export default function WishlistPage() {
               className="group flex flex-col overflow-hidden rounded-xl border border-border bg-white"
             >
               <div className="relative aspect-square overflow-hidden bg-soft-lilac">
-                <Link href={`/shop/${item.productSlug}`} className="block h-full w-full">
+                <Link href={`/shop/${item.productSlug}`} className="relative block h-full w-full">
                   {item.image && (
                     <Image
                       src={item.image}

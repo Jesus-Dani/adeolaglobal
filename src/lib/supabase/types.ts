@@ -14,6 +14,14 @@
 
 export type ProductStatus = "draft" | "active" | "archived";
 export type ProfileRole = "customer" | "admin";
+export type OrderStatus =
+  | "pending"
+  | "confirmed"
+  | "out_for_delivery"
+  | "delivered"
+  | "payment_failed"
+  | "stock_conflict";
+export type PaymentStatus = "pending" | "success" | "failed";
 
 export interface Database {
   public: {
@@ -168,9 +176,96 @@ export interface Database {
           },
         ];
       };
+      orders: {
+        Row: {
+          id: string;
+          order_number: string;
+          user_id: string | null;
+          status: OrderStatus;
+          delivery_name: string;
+          delivery_phone: string;
+          delivery_address: string;
+          delivery_notes: string | null;
+          terms_accepted: boolean;
+          subtotal: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Omit<Database["public"]["Tables"]["orders"]["Row"], "order_number">> & {
+          delivery_name: string;
+          delivery_phone: string;
+          delivery_address: string;
+          terms_accepted: boolean;
+          subtotal: number;
+        };
+        Update: Partial<Database["public"]["Tables"]["orders"]["Row"]>;
+        Relationships: [];
+      };
+      order_items: {
+        Row: {
+          id: string;
+          order_id: string;
+          variant_id: string;
+          quantity: number;
+          price_at_purchase: number;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["order_items"]["Row"]> & {
+          order_id: string;
+          variant_id: string;
+          quantity: number;
+          price_at_purchase: number;
+        };
+        Update: Partial<Database["public"]["Tables"]["order_items"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey";
+            columns: ["order_id"];
+            referencedRelation: "orders";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "order_items_variant_id_fkey";
+            columns: ["variant_id"];
+            referencedRelation: "product_variants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      payments: {
+        Row: {
+          id: string;
+          order_id: string;
+          paystack_reference: string;
+          status: PaymentStatus;
+          channel: string | null;
+          amount: number;
+          webhook_verified_at: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["payments"]["Row"]> & {
+          order_id: string;
+          paystack_reference: string;
+          amount: number;
+        };
+        Update: Partial<Database["public"]["Tables"]["payments"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "payments_order_id_fkey";
+            columns: ["order_id"];
+            referencedRelation: "orders";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      confirm_order_payment: {
+        Args: { p_paystack_reference: string; p_channel: string };
+        Returns: string;
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };
@@ -182,6 +277,9 @@ export type ProductVariant = Database["public"]["Tables"]["product_variants"]["R
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type CartItem = Database["public"]["Tables"]["cart_items"]["Row"];
 export type Wishlist = Database["public"]["Tables"]["wishlists"]["Row"];
+export type Order = Database["public"]["Tables"]["orders"]["Row"];
+export type OrderItem = Database["public"]["Tables"]["order_items"]["Row"];
+export type Payment = Database["public"]["Tables"]["payments"]["Row"];
 
 /** What storefront queries actually select — never includes cost_price (admin-only column). */
 export type PublicProduct = Omit<Product, "cost_price">;
