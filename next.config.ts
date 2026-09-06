@@ -3,7 +3,19 @@ import { withSentryConfig } from "@sentry/nextjs";
 import withSerwistInit from "@serwist/next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    // Admin-uploaded product photos live in Supabase Storage (public bucket)
+    // — next/image hard-errors on external hosts that aren't allow-listed
+    // here. Wildcarded rather than pinned to this one project ref so it
+    // keeps working if the project is ever recreated/migrated.
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+    ],
+  },
 };
 
 const withSerwist = withSerwistInit({
