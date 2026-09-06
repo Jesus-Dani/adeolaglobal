@@ -4,7 +4,7 @@ import type { OrderStatus } from "@/lib/supabase/types";
 // Orders whose payment genuinely succeeded — includes stock_conflict because
 // the money was captured even though fulfillment has a conflict to resolve
 // manually (see the confirm_order_payment RPC in the Phase 3 migration).
-const PAID_STATUSES: OrderStatus[] = ["confirmed", "out_for_delivery", "delivered", "stock_conflict"];
+export const PAID_STATUSES: OrderStatus[] = ["confirmed", "out_for_delivery", "delivered", "stock_conflict"];
 
 interface OrderItemForStats {
   variant_id: string;
