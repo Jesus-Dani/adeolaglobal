@@ -12,6 +12,10 @@ interface OrderItemForStats {
   price_at_purchase: number;
 }
 
+interface OrderItemForRevenue extends OrderItemForStats {
+  orders: { created_at: string };
+}
+
 interface VariantForStats {
   id: string;
   product_id: string;
@@ -111,4 +115,95 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     .slice(0, 5);
 
   return { revenue, profit, orderCount: orderCountResult.count ?? 0, lowStockCount, topProducts };
+}
+
+export interface RevenueDetail {
+  totalRevenue: number;
+  totalProfit: number;
+  byMonth: { month: string; revenue: number; profit: number }[];
+  topByRevenue: { productId: string; name: string; revenue: number; profit: number; unitsSold: number }[];
+  topByMargin: { productId: string; name: string; revenue: number; profit: number; unitsSold: number }[];
+}
+
+export async function getRevenueDetail(): Promise<RevenueDetail> {
+  const admin = createAdminClient();
+
+  const { data: orderItems, error: itemsError } = await admin
+    .from("order_items")
+    .select("variant_id, quantity, price_at_purchase, orders!inner(status, created_at)")
+    .in("orders.status", PAID_STATUSES);
+  if (itemsError) throw itemsError;
+
+  const items = (orderItems ?? []) as OrderItemForRevenue[];
+
+  if (items.length === 0) {
+    return { totalRevenue: 0, totalProfit: 0, byMonth: [], topByRevenue: [], topByMargin: [] };
+  }
+
+  const variantIds = [...new Set(items.map((i) => i.variant_id))];
+  const { data: variants, error: variantsError } = await admin
+    .from("product_variants")
+    .select("id, product_id")
+    .in("id", variantIds);
+  if (variantsError) throw variantsError;
+
+  const productIds = [...new Set((variants ?? []).map((v: VariantForStats) => v.product_id))];
+  const { data: products, error: productsError } = await admin
+    .from("products")
+    .select("id, name, cost_price")
+    .in("id", productIds);
+  if (productsError) throw productsError;
+
+  const productByVariantId = new Map<string, ProductForStats>();
+  for (const variant of (variants ?? []) as VariantForStats[]) {
+    const product = (products ?? []).find((p) => p.id === variant.product_id) as
+      | ProductForStats
+      | undefined;
+    if (product) productByVariantId.set(variant.id, product);
+  }
+
+  let totalRevenue = 0;
+  let totalProfit = 0;
+  const byMonth = new Map<string, { revenue: number; profit: number }>();
+  const byProduct = new Map<string, { name: string; revenue: number; profit: number; unitsSold: number }>();
+
+  for (const item of items) {
+    const product = productByVariantId.get(item.variant_id);
+    if (!product) continue;
+
+    const lineRevenue = item.price_at_purchase * item.quantity;
+    const lineCost = (product.cost_price ?? 0) * item.quantity;
+    const lineProfit = lineRevenue - lineCost;
+    totalRevenue += lineRevenue;
+    totalProfit += lineProfit;
+
+    const month = item.orders.created_at.slice(0, 7); // YYYY-MM
+    const monthEntry = byMonth.get(month) ?? { revenue: 0, profit: 0 };
+    monthEntry.revenue += lineRevenue;
+    monthEntry.profit += lineProfit;
+    byMonth.set(month, monthEntry);
+
+    const productEntry = byProduct.get(product.id) ?? {
+      name: product.name,
+      revenue: 0,
+      profit: 0,
+      unitsSold: 0,
+    };
+    productEntry.revenue += lineRevenue;
+    productEntry.profit += lineProfit;
+    productEntry.unitsSold += item.quantity;
+    byProduct.set(product.id, productEntry);
+  }
+
+  const productRows = [...byProduct.entries()].map(([productId, v]) => ({ productId, ...v }));
+
+  return {
+    totalRevenue,
+    totalProfit,
+    byMonth: [...byMonth.entries()]
+      .map(([month, v]) => ({ month, ...v }))
+      .sort((a, b) => a.month.localeCompare(b.month)),
+    topByRevenue: [...productRows].sort((a, b) => b.revenue - a.revenue).slice(0, 10),
+    topByMargin: [...productRows].sort((a, b) => b.profit - a.profit).slice(0, 10),
+  };
 }
