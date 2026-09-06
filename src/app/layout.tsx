@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
 import { Fraunces } from "next/font/google";
-import { SiteHeader } from "@/components/layout/site-header";
-import { SiteFooter } from "@/components/layout/site-footer";
-import { AuthSync } from "@/components/auth/auth-sync";
 import { SerwistProvider } from "@serwist/next/react";
 import "./globals.css";
 
@@ -30,12 +27,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body className="min-h-full flex flex-col font-sans">
-        <SerwistProvider swUrl="/sw.js">
-          <AuthSync />
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
-        </SerwistProvider>
+        <SerwistProvider swUrl="/sw.js">{children}</SerwistProvider>
       </body>
     </html>
   );
