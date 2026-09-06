@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 // Password-gated admin per PRD.md §2/§4 (single owner, no staff, no 2FA) —
 // a deliberate simplification from TRD.md's original Supabase-Auth-role
@@ -81,4 +82,15 @@ export async function setAdminSessionCookie(): Promise<void> {
 export async function clearAdminSessionCookie(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
+}
+
+/**
+ * Use at the top of every admin API route/Server Action — the /admin layout
+ * guard protects pages, but a route hit directly needs its own check too.
+ * Returns a 401 response to return immediately, or `null` when the session
+ * is valid.
+ */
+export async function requireAdminSession(): Promise<NextResponse | null> {
+  if (await hasValidAdminSession()) return null;
+  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 }
