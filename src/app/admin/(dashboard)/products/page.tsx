@@ -32,13 +32,23 @@ export default async function AdminProductsPage() {
     <div>
       <div className="flex items-center justify-between">
         <h1 className="font-display text-display-l text-deep-plum">Products</h1>
-        <Button
-          nativeButton={false}
-          render={<Link href="/admin/products/new" />}
-          className="uppercase text-label tracking-wide"
-        >
-          Add Product
-        </Button>
+        <div className="flex gap-3">
+          <Button
+            variant="outline"
+            nativeButton={false}
+            render={<Link href="/admin/products/import" />}
+            className="uppercase text-label tracking-wide"
+          >
+            Import CSV
+          </Button>
+          <Button
+            nativeButton={false}
+            render={<Link href="/admin/products/new" />}
+            className="uppercase text-label tracking-wide"
+          >
+            Add Product
+          </Button>
+        </div>
       </div>
 
       <div className="mt-6">
