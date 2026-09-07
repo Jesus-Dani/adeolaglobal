@@ -22,6 +22,8 @@ export type OrderStatus =
   | "payment_failed"
   | "stock_conflict";
 export type PaymentStatus = "pending" | "success" | "failed";
+export type AnalyticsEventType = "product_view" | "search" | "add_to_cart" | "checkout_start" | "purchase";
+export type ReviewStatus = "pending" | "approved" | "rejected";
 
 export interface Database {
   public: {
@@ -258,6 +260,55 @@ export interface Database {
           },
         ];
       };
+      analytics_events: {
+        Row: {
+          id: string;
+          user_id: string;
+          event_type: AnalyticsEventType;
+          product_id: string | null;
+          metadata: Record<string, unknown>;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["analytics_events"]["Row"]> & {
+          user_id: string;
+          event_type: AnalyticsEventType;
+        };
+        Update: Partial<Database["public"]["Tables"]["analytics_events"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "analytics_events_product_id_fkey";
+            columns: ["product_id"];
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      reviews: {
+        Row: {
+          id: string;
+          product_id: string;
+          user_id: string;
+          rating: number;
+          body: string | null;
+          status: ReviewStatus;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["reviews"]["Row"]> & {
+          product_id: string;
+          user_id: string;
+          rating: number;
+        };
+        Update: Partial<Database["public"]["Tables"]["reviews"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "reviews_product_id_fkey";
+            columns: ["product_id"];
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -280,6 +331,8 @@ export type Wishlist = Database["public"]["Tables"]["wishlists"]["Row"];
 export type Order = Database["public"]["Tables"]["orders"]["Row"];
 export type OrderItem = Database["public"]["Tables"]["order_items"]["Row"];
 export type Payment = Database["public"]["Tables"]["payments"]["Row"];
+export type AnalyticsEvent = Database["public"]["Tables"]["analytics_events"]["Row"];
+export type Review = Database["public"]["Tables"]["reviews"]["Row"];
 
 /** What storefront queries actually select — never includes cost_price (admin-only column). */
 export type PublicProduct = Omit<Product, "cost_price">;
