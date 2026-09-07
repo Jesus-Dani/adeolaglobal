@@ -12,6 +12,7 @@ const ADMIN_NAV_LINKS = [
   { href: "/admin/revenue", label: "Revenue" },
   { href: "/admin/analytics", label: "Analytics" },
   { href: "/admin/customers", label: "Customers" },
+  { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/categories", label: "Categories" },
 ];
 
