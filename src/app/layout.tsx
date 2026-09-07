@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces } from "next/font/google";
 import { SerwistProvider } from "@serwist/next/react";
+import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -10,10 +11,26 @@ const fraunces = Fraunces({
   style: ["normal", "italic"],
 });
 
+const SITE_DESCRIPTION =
+  "Premium hair and skincare, handmade crafts, unique gifts and more from ADEOLA Global Ltd.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: "ADEOLA Global Ltd | Nature. Beauty. Creativity.",
-  description:
-    "Premium hair and skincare, handmade crafts, unique gifts and more from ADEOLA Global Ltd.",
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    siteName: "ADEOLA Global Ltd",
+    type: "website",
+    title: "ADEOLA Global Ltd | Nature. Beauty. Creativity.",
+    description: SITE_DESCRIPTION,
+    images: [{ url: "/images/hero-banner.jpg", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ADEOLA Global Ltd | Nature. Beauty. Creativity.",
+    description: SITE_DESCRIPTION,
+    images: ["/images/hero-banner.jpg"],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

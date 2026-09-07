@@ -15,9 +15,26 @@ export async function generateMetadata({ params }: PdpPageProps) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) return {};
+
+  const title = `${product.name} | ADEOLA Global Ltd`;
+  const description = product.description ?? undefined;
+  const image = product.images[0];
+
   return {
-    title: `${product.name} | ADEOLA Global Ltd`,
-    description: product.description ?? undefined,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website" as const,
+      images: image ? [{ url: image }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+      title,
+      description,
+      images: image ? [image] : undefined,
+    },
   };
 }
 
