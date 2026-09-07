@@ -56,6 +56,16 @@ export function PdpPurchasePanel({ product }: { product: ProductWithVariants }) 
       quantity,
     );
     setQuantity(1);
+
+    fetch("/api/analytics/track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        eventType: "add_to_cart",
+        productId: product.id,
+        metadata: { variantId: selectedVariant.id, quantity },
+      }),
+    }).catch(() => {});
   }
 
   return (

@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { SearchX } from "lucide-react";
 import { getProducts, getCategories, type GetProductsParams } from "@/lib/products";
+import { createClient } from "@/lib/supabase/server";
+import { trackEvent } from "@/lib/analytics/track";
 import { ProductCard } from "@/components/product-card";
 import { EmptyState } from "@/components/empty-state";
 import { ShopFilters } from "./shop-filters";
@@ -29,6 +31,14 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   };
 
   const [products, categories] = await Promise.all([getProducts(query), getCategories()]);
+
+  if (params.q) {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    await trackEvent(supabase, user?.id, { eventType: "search", metadata: { query: params.q } });
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">

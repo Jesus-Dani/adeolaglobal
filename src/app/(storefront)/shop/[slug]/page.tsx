@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/lib/products";
+import { createClient } from "@/lib/supabase/server";
+import { trackEvent } from "@/lib/analytics/track";
 import { HairlineDivider } from "@/components/hairline-divider";
 import { ProductGallery } from "./product-gallery";
 import { PdpPurchasePanel } from "./pdp-purchase-panel";
@@ -22,6 +24,12 @@ export default async function ProductPage({ params }: PdpPageProps) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) notFound();
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  await trackEvent(supabase, user?.id, { eventType: "product_view", productId: product.id });
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">

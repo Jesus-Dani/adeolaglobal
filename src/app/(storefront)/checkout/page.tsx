@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { trackEvent } from "@/lib/analytics/track";
 import { HairlineDivider } from "@/components/hairline-divider";
 import { CheckoutForm } from "./checkout-form";
 
@@ -9,6 +10,8 @@ export default async function CheckoutPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  await trackEvent(supabase, user?.id, { eventType: "checkout_start" });
 
   let name = "";
   let phone = "";
