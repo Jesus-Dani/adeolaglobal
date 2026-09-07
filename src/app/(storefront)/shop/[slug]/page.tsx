@@ -5,6 +5,7 @@ import { trackEvent } from "@/lib/analytics/track";
 import { HairlineDivider } from "@/components/hairline-divider";
 import { ProductGallery } from "./product-gallery";
 import { PdpPurchasePanel } from "./pdp-purchase-panel";
+import { ProductReviews } from "./product-reviews";
 
 interface PdpPageProps {
   params: Promise<{ slug: string }>;
@@ -53,10 +54,7 @@ export default async function ProductPage({ params }: PdpPageProps) {
       )}
 
       <div className="mt-12 max-w-2xl border-t border-border pt-8">
-        <h2 className="font-display text-display-m text-deep-plum">Reviews</h2>
-        <p className="mt-3 text-body-m text-muted-foreground">
-          No reviews yet. Be the first to review this product once you&apos;ve purchased it.
-        </p>
+        <ProductReviews productId={product.id} />
       </div>
     </div>
   );
