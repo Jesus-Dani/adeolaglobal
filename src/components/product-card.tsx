@@ -102,6 +102,7 @@ export function ProductCard({ product }: { product: ProductWithVariants }) {
 
         {singleVariant ? (
           <Button
+            variant="outline"
             size="sm"
             disabled={outOfStock}
             onClick={handleAddToCart}
@@ -113,7 +114,7 @@ export function ProductCard({ product }: { product: ProductWithVariants }) {
         ) : (
           <Link
             href={`/shop/${product.slug}`}
-            className="mt-auto flex h-8 w-full items-center justify-center bg-primary text-label text-primary-foreground uppercase tracking-wide hover:bg-primary/80"
+            className="mt-auto flex h-8 w-full items-center justify-center border border-border bg-white text-label text-charcoal uppercase tracking-wide hover:bg-muted"
           >
             Select Options
           </Link>
