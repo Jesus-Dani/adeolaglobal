@@ -96,7 +96,7 @@ export function ProductCard({ product }: { product: ProductWithVariants }) {
 
       <div className="flex flex-1 flex-col gap-2 p-3">
         <Link href={`/shop/${product.slug}`}>
-          <h3 className="line-clamp-2 text-body-m text-charcoal">{product.name}</h3>
+          <h2 className="line-clamp-2 text-body-m text-charcoal">{product.name}</h2>
         </Link>
         <p className="text-price font-bold tabular-nums text-plum">{formatNaira(product.base_price)}</p>
 

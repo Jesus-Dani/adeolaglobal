@@ -54,7 +54,7 @@ export default function WishlistPage() {
               </div>
               <div className="flex flex-1 flex-col gap-2 p-3">
                 <Link href={`/shop/${item.productSlug}`}>
-                  <h3 className="line-clamp-2 text-body-m text-charcoal">{item.productName}</h3>
+                  <h2 className="line-clamp-2 text-body-m text-charcoal">{item.productName}</h2>
                 </Link>
                 <p className="mt-auto text-price font-bold tabular-nums text-plum">
                   {formatNaira(item.price)}

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Fraunces } from "next/font/google";
+import { Instrument_Sans } from "next/font/google";
 import { SerwistProvider } from "@serwist/next/react";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const instrumentSans = Instrument_Sans({
+  variable: "--font-instrument-sans",
   subsets: ["latin"],
-  weight: ["500", "600"],
+  weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
 });
 
@@ -35,14 +35,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${fraunces.variable} h-full antialiased`}>
-      <head>
-        <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="anonymous" />
-        <link
-          rel="stylesheet"
-          href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap"
-        />
-      </head>
+    <html lang="en" className={`${instrumentSans.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans">
         <a
           href="#main-content"
