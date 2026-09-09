@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { GoogleButton } from "@/components/auth/google-button";
 
 export function SignupForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,7 +29,7 @@ export function SignupForm() {
 
     setLoading(true);
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { name } },
@@ -36,6 +38,17 @@ export function SignupForm() {
     setLoading(false);
     if (error) {
       setError(error.message);
+      return;
+    }
+
+    // Email confirmation is off for this project, so signUp returns an
+    // active session immediately — the customer is signed in on account
+    // creation, not stuck verifying email before they can check out. The
+    // "check your email" branch below only matters if that setting is ever
+    // switched back on in the Supabase dashboard.
+    if (data.session) {
+      router.push(searchParams.get("next") ?? "/account");
+      router.refresh();
       return;
     }
 
@@ -112,14 +125,6 @@ export function SignupForm() {
       <Button type="submit" disabled={loading} className="mt-2 uppercase text-label tracking-wide">
         {loading ? "Creating account..." : "Create Account"}
       </Button>
-
-      <div className="flex items-center gap-3 text-body-s text-muted-foreground">
-        <span className="h-px flex-1 bg-border" />
-        or
-        <span className="h-px flex-1 bg-border" />
-      </div>
-
-      <GoogleButton />
 
       <p className="text-center text-body-s text-muted-foreground">
         Already have an account?{" "}

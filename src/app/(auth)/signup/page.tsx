@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { HairlineDivider } from "@/components/hairline-divider";
 import { SignupForm } from "./signup-form";
 
@@ -9,7 +10,9 @@ export default function SignupPage() {
       <h1 className="text-center font-display text-display-l text-deep-plum">Create Account</h1>
       <HairlineDivider className="mx-auto mt-4 max-w-32" />
       <div className="mt-8">
-        <SignupForm />
+        <Suspense fallback={null}>
+          <SignupForm />
+        </Suspense>
       </div>
     </div>
   );

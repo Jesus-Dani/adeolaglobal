@@ -34,11 +34,14 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // Who's checking out, if anyone — orders.user_id is nullable for guests.
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "You must be signed in to check out." }, { status: 401 });
+    }
 
     const admin = createAdminClient();
 
@@ -80,7 +83,7 @@ export async function POST(request: NextRequest) {
     const { data: order, error: orderError } = await admin
       .from("orders")
       .insert({
-        user_id: user?.id ?? null,
+        user_id: user.id,
         delivery_name: body.delivery.name,
         delivery_phone: body.delivery.phone,
         delivery_address: body.delivery.address,

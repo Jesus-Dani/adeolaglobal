@@ -6,7 +6,6 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { GoogleButton } from "@/components/auth/google-button";
 
 export function LoginForm() {
   const router = useRouter();
@@ -67,14 +66,6 @@ export function LoginForm() {
       <Button type="submit" disabled={loading} className="mt-2 uppercase text-label tracking-wide">
         {loading ? "Signing in..." : "Sign In"}
       </Button>
-
-      <div className="flex items-center gap-3 text-body-s text-muted-foreground">
-        <span className="h-px flex-1 bg-border" />
-        or
-        <span className="h-px flex-1 bg-border" />
-      </div>
-
-      <GoogleButton />
 
       <p className="text-center text-body-s text-muted-foreground">
         Don&apos;t have an account?{" "}
