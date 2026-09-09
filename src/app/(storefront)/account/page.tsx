@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { HairlineDivider } from "@/components/hairline-divider";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { PushNotificationToggle } from "@/components/push-notification-toggle";
 
 export const metadata = { title: "My Account | ADEOLA Global Ltd" };
 
@@ -48,6 +49,10 @@ export default async function AccountPage() {
             View order history
           </Link>
         </div>
+      </div>
+
+      <div className="mt-6">
+        <PushNotificationToggle />
       </div>
 
       <div className="mt-6">
