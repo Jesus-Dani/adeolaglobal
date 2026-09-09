@@ -45,6 +45,9 @@ export interface MyOrderDetail {
   }[];
 }
 
+const ORDER_COLUMNS =
+  "id, order_number, status, delivery_name, delivery_phone, delivery_address, delivery_notes, subtotal, created_at";
+
 export async function getMyOrderDetail(
   supabase: SupabaseClient<Database>,
   userId: string,
@@ -52,15 +55,63 @@ export async function getMyOrderDetail(
 ): Promise<MyOrderDetail | null> {
   const { data: order, error: orderError } = await supabase
     .from("orders")
-    .select(
-      "id, order_number, status, delivery_name, delivery_phone, delivery_address, delivery_notes, subtotal, created_at",
-    )
+    .select(ORDER_COLUMNS)
     .eq("id", orderId)
     .eq("user_id", userId)
     .maybeSingle();
   if (orderError) throw orderError;
   if (!order) return null;
 
+  return buildOrderDetail(supabase, order);
+}
+
+/**
+ * Looks up an order by its Paystack payment reference — used by the order
+ * confirmation page, which only has the reference (from the checkout
+ * redirect URL), not the order id. Scoped to userId same as
+ * getMyOrderDetail: RLS already restricts payments/orders reads to their
+ * owner, but the explicit filter keeps that intent visible here too.
+ */
+export async function getOrderByReference(
+  supabase: SupabaseClient<Database>,
+  userId: string,
+  reference: string,
+): Promise<MyOrderDetail | null> {
+  const { data: payment, error: paymentError } = await supabase
+    .from("payments")
+    .select("order_id")
+    .eq("paystack_reference", reference)
+    .maybeSingle();
+  if (paymentError) throw paymentError;
+  if (!payment) return null;
+
+  const { data: order, error: orderError } = await supabase
+    .from("orders")
+    .select(ORDER_COLUMNS)
+    .eq("id", payment.order_id)
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (orderError) throw orderError;
+  if (!order) return null;
+
+  return buildOrderDetail(supabase, order);
+}
+
+async function buildOrderDetail(
+  supabase: SupabaseClient<Database>,
+  order: {
+    id: string;
+    order_number: string;
+    status: OrderStatus;
+    delivery_name: string;
+    delivery_phone: string;
+    delivery_address: string;
+    delivery_notes: string | null;
+    subtotal: number;
+    created_at: string;
+  },
+): Promise<MyOrderDetail> {
+  const orderId = order.id;
   const { data: items, error: itemsError } = await supabase
     .from("order_items")
     .select("id, variant_id, quantity, price_at_purchase")
