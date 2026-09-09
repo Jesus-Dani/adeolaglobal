@@ -10,7 +10,14 @@ import { useCartStore } from "@/lib/store/cart";
 import { useWishlistStore } from "@/lib/store/wishlist";
 import { Button } from "@/components/ui/button";
 
-export function ProductCard({ product }: { product: ProductWithVariants }) {
+export function ProductCard({
+  product,
+  headingLevel: Heading = "h2",
+}: {
+  product: ProductWithVariants;
+  /** Defaults to h2 (the shop grid sits directly under the page's h1). Pass "h3" when nesting under a section heading, e.g. the homepage's "Bestsellers". */
+  headingLevel?: "h2" | "h3";
+}) {
   const outOfStock = isOutOfStock(product);
   const addItem = useCartStore((s) => s.addItem);
   const isSaved = useWishlistStore((s) => s.isSaved(product.id));
@@ -96,7 +103,7 @@ export function ProductCard({ product }: { product: ProductWithVariants }) {
 
       <div className="flex flex-1 flex-col gap-2 p-3">
         <Link href={`/shop/${product.slug}`}>
-          <h2 className="line-clamp-2 text-body-m text-charcoal">{product.name}</h2>
+          <Heading className="line-clamp-2 text-body-m text-charcoal">{product.name}</Heading>
         </Link>
         <p className="text-price font-bold tabular-nums text-plum">{formatNaira(product.base_price)}</p>
 

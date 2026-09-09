@@ -85,6 +85,45 @@ export async function getCategories(): Promise<Category[]> {
   return data;
 }
 
+export interface CategoryWithPreview extends Category {
+  productCount: number;
+  previewImage: string | null;
+}
+
+/**
+ * Categories that actually have at least one active product — used
+ * anywhere customers browse by category (the /categories page, the
+ * homepage) so a click never lands on a dead-end empty grid. The full,
+ * unfiltered category list (including empty ones) is still what admin
+ * product/CSV-import forms use, via getCategories().
+ */
+export async function getCategoriesWithActiveProducts(): Promise<CategoryWithPreview[]> {
+  const [categories, supabase] = await Promise.all([getCategories(), createClient()]);
+
+  const { data: products, error } = await supabase
+    .from("products")
+    .select("category_id, images")
+    .eq("status", "active");
+  if (error) throw error;
+
+  const previewByCategory = new Map<string, string | null>();
+  const countByCategory = new Map<string, number>();
+  for (const product of products ?? []) {
+    countByCategory.set(product.category_id, (countByCategory.get(product.category_id) ?? 0) + 1);
+    if (!previewByCategory.has(product.category_id)) {
+      previewByCategory.set(product.category_id, product.images[0] ?? null);
+    }
+  }
+
+  return categories
+    .map((category) => ({
+      ...category,
+      productCount: countByCategory.get(category.id) ?? 0,
+      previewImage: previewByCategory.get(category.id) ?? null,
+    }))
+    .filter((category) => category.productCount > 0);
+}
+
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
