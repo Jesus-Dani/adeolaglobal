@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     type: "website",
     title: "ADEOLA Global Ltd | Nature. Beauty. Creativity.",
     description: SITE_DESCRIPTION,
-    images: [{ url: "/images/hero-banner.jpg", width: 1200, height: 630 }],
+    images: [{ url: "/images/hero-banner.jpg", width: 1040, height: 514 }],
   },
   twitter: {
     card: "summary_large_image",
