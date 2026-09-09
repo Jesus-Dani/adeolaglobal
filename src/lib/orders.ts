@@ -100,10 +100,10 @@ export async function getMyOrderDetail(
       const product = variant ? productById.get(variant.product_id) : undefined;
       return {
         id: item.id,
-        productName: product?.name ?? "—",
+        productName: product?.name ?? "-",
         variantLabel: variant
-          ? [variant.size, variant.colour, variant.material, variant.style].filter(Boolean).join(" / ") || "—"
-          : "—",
+          ? [variant.size, variant.colour, variant.material, variant.style].filter(Boolean).join(" / ") || "-"
+          : "-",
         quantity: item.quantity,
         priceAtPurchase: item.price_at_purchase,
       };

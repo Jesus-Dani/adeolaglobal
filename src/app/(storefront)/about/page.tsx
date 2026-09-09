@@ -11,7 +11,7 @@ export default function AboutPage() {
       <div className="mt-6 flex flex-col gap-4 text-body-l text-charcoal">
         <p>
           ADEOLA Global Ltd is a Nigerian multi-category business bringing together hair and
-          skincare, crochet and handmade products, home-care essentials, and thoughtful gifting —
+          skincare, crochet and handmade products, home-care essentials, and thoughtful gifting,
           all in one place.
         </p>
         <p>
@@ -21,7 +21,7 @@ export default function AboutPage() {
         </p>
         <p>
           ADEOLA Global is run by a single dedicated owner-operator, which means every order is
-          seen and cared for personally — from the moment it&apos;s placed to the moment it arrives.
+          seen and cared for personally, from the moment it&apos;s placed to the moment it arrives.
         </p>
       </div>
     </div>

@@ -85,7 +85,7 @@ export async function getAnalyticsDashboard(): Promise<AnalyticsDashboard> {
   const nameByProductId = new Map((products ?? []).map((p) => [p.id, p.name]));
 
   const topProducts = [...viewCounts.entries()]
-    .map(([productId, views]) => ({ productId, name: nameByProductId.get(productId) ?? "—", views }))
+    .map(([productId, views]) => ({ productId, name: nameByProductId.get(productId) ?? "-", views }))
     .sort((a, b) => b.views - a.views)
     .slice(0, 10);
 

@@ -39,7 +39,7 @@ export async function DELETE(_request: NextRequest, { params }: { params: Promis
 
   if (count && count > 0) {
     return NextResponse.json(
-      { error: `Cannot delete — ${count} product(s) still use this category.` },
+      { error: `Cannot delete: ${count} product(s) still use this category.` },
       { status: 409 },
     );
   }

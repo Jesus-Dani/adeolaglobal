@@ -53,7 +53,7 @@ export default async function AdminReviewsPage({
                 <td className="px-4 py-3">
                   <StarRating rating={review.rating} />
                 </td>
-                <td className="px-4 py-3 max-w-xs text-charcoal">{review.body ?? "—"}</td>
+                <td className="px-4 py-3 max-w-xs text-charcoal">{review.body ?? "-"}</td>
                 <td className="px-4 py-3">
                   <ReviewStatusBadge status={review.status} />
                 </td>

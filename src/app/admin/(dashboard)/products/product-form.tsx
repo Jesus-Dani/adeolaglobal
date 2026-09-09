@@ -178,7 +178,7 @@ export function ProductForm({
           <Input type="number" min={0} step="0.01" value={basePrice} onChange={(e) => setBasePrice(e.target.value)} required />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-body-s font-medium text-charcoal">Cost price (₦) — admin only</span>
+          <span className="text-body-s font-medium text-charcoal">Cost price (₦), admin only</span>
           <Input type="number" min={0} step="0.01" value={costPrice} onChange={(e) => setCostPrice(e.target.value)} />
         </label>
         <div className="flex items-center gap-6 sm:col-span-2">

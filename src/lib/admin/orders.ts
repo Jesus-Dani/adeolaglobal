@@ -124,11 +124,11 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
       const product = variant ? productById.get(variant.product_id) : undefined;
       return {
         id: item.id,
-        productName: product?.name ?? "—",
+        productName: product?.name ?? "-",
         variantLabel: variant
-          ? [variant.size, variant.colour, variant.material, variant.style].filter(Boolean).join(" / ") || "—"
-          : "—",
-        sku: variant?.sku ?? "—",
+          ? [variant.size, variant.colour, variant.material, variant.style].filter(Boolean).join(" / ") || "-"
+          : "-",
+        sku: variant?.sku ?? "-",
         quantity: item.quantity,
         priceAtPurchase: item.price_at_purchase,
       };

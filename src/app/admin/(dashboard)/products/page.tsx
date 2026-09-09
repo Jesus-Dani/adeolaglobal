@@ -24,7 +24,7 @@ export default async function AdminProductsPage() {
     status: p.status,
     isBestseller: p.is_bestseller,
     isNew: p.is_new,
-    categoryName: p.categories?.name ?? "—",
+    categoryName: p.categories?.name ?? "-",
     totalStock: p.product_variants.reduce((sum, v) => sum + v.stock_count, 0),
   }));
 

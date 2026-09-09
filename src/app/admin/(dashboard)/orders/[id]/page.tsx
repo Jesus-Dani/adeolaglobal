@@ -107,7 +107,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
                 </div>
                 <div className="flex justify-between gap-4">
                   <dt className="text-muted-foreground">Channel</dt>
-                  <dd className="text-charcoal">{order.payment.channel ?? "—"}</dd>
+                  <dd className="text-charcoal">{order.payment.channel ?? "-"}</dd>
                 </div>
                 <div className="flex justify-between gap-4">
                   <dt className="text-muted-foreground">Amount</dt>

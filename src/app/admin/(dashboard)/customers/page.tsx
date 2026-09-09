@@ -40,15 +40,15 @@ export default async function AdminCustomersPage() {
             )}
             {customers.map((c) => (
               <tr key={c.id} className="border-b border-border last:border-0">
-                <td className="px-4 py-3 text-charcoal">{c.name ?? "—"}</td>
-                <td className="px-4 py-3 text-muted-foreground">{c.email ?? "—"}</td>
-                <td className="px-4 py-3 text-muted-foreground">{c.phone ?? "—"}</td>
+                <td className="px-4 py-3 text-charcoal">{c.name ?? "-"}</td>
+                <td className="px-4 py-3 text-muted-foreground">{c.email ?? "-"}</td>
+                <td className="px-4 py-3 text-muted-foreground">{c.phone ?? "-"}</td>
                 <td className="px-4 py-3 tabular-nums text-charcoal">{c.orderCount}</td>
                 <td className="px-4 py-3 tabular-nums font-semibold text-plum">{formatNaira(c.totalSpent)}</td>
                 <td className="px-4 py-3 text-muted-foreground">
                   {c.lastOrderAt
                     ? new Date(c.lastOrderAt).toLocaleDateString("en-NG", { dateStyle: "medium" })
-                    : "—"}
+                    : "-"}
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
                   {new Date(c.joinedAt).toLocaleDateString("en-NG", { dateStyle: "medium" })}

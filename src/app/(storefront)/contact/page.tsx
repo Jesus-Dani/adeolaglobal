@@ -14,7 +14,7 @@ export default function ContactPage() {
 
       <p className="mt-6 text-body-l text-charcoal">
         Have a question about an order, a product, or anything else? The fastest way to reach us
-        is WhatsApp — we read and reply there directly.
+        is WhatsApp. We read and reply there directly.
       </p>
 
       <div className="mt-6 flex items-center gap-3 rounded-xl border border-border bg-soft-lilac p-4">

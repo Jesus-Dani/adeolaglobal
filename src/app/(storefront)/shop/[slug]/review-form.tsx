@@ -41,7 +41,7 @@ export function ReviewForm({ productId }: { productId: string }) {
   if (submitted) {
     return (
       <p className="rounded-xl border border-border bg-white p-4 text-body-m text-charcoal">
-        Thanks — your review is awaiting approval.
+        Thanks! Your review is awaiting approval.
       </p>
     );
   }

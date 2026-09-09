@@ -18,7 +18,7 @@ export default async function AdminAnalyticsPage() {
       <div className="mt-8">
         <h2 className="font-display text-display-m text-deep-plum">Funnel</h2>
         <p className="mt-2 text-body-s text-muted-foreground">
-          Distinct users per stage in this window — not a strict cohort funnel, so a user counted at a
+          Distinct users per stage in this window. Not a strict cohort funnel, so a user counted at a
           later stage isn&apos;t guaranteed to have hit every earlier one.
         </p>
         <div className="mt-4 overflow-x-auto rounded-xl border border-border bg-white">
@@ -37,7 +37,7 @@ export default async function AdminAnalyticsPage() {
                   <td className="px-4 py-3 text-charcoal">{stage.label}</td>
                   <td className="px-4 py-3 tabular-nums text-charcoal">{stage.distinctUsers}</td>
                   <td className="px-4 py-3 tabular-nums text-muted-foreground">
-                    {stage.dropOffPct === null ? "—" : `${stage.dropOffPct}%`}
+                    {stage.dropOffPct === null ? "-" : `${stage.dropOffPct}%`}
                   </td>
                   <td className="px-4 py-3">
                     <div className="h-2 w-32 rounded-full bg-soft-lilac">
@@ -54,7 +54,7 @@ export default async function AdminAnalyticsPage() {
         </div>
         {dashboard.funnel.at(-1)?.distinctUsers === 0 && (
           <p className="mt-2 text-body-s text-muted-foreground">
-            No completed purchases are logged yet — this stage fires once Paystack webhook confirmation is
+            No completed purchases are logged yet. This stage fires once Paystack webhook confirmation is
             wired up.
           </p>
         )}

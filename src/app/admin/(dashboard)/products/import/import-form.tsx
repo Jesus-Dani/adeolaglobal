@@ -107,7 +107,7 @@ export function ImportForm() {
           <ul className="mt-2 space-y-1 text-body-s">
             {results.map((r) => (
               <li key={r.slug} className={r.status === "error" ? "text-destructive" : "text-charcoal"}>
-                {r.slug}: {r.status === "error" ? `error — ${r.error}` : r.status}
+                {r.slug}: {r.status === "error" ? `error: ${r.error}` : r.status}
               </li>
             ))}
           </ul>

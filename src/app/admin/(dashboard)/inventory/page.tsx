@@ -18,9 +18,9 @@ export default async function AdminInventoryPage() {
   const rows = (variants ?? []).map((v) => ({
     id: v.id,
     sku: v.sku,
-    productName: v.products?.name ?? "—",
+    productName: v.products?.name ?? "-",
     productId: v.products?.id ?? "",
-    variantLabel: [v.size, v.colour, v.material, v.style].filter(Boolean).join(" / ") || "—",
+    variantLabel: [v.size, v.colour, v.material, v.style].filter(Boolean).join(" / ") || "-",
     stockCount: v.stock_count,
     lowStockThreshold: v.low_stock_threshold,
   }));

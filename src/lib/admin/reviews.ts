@@ -47,8 +47,8 @@ export async function listReviews(filters: { status?: ReviewStatus }): Promise<A
   return reviews.map((r) => ({
     id: r.id,
     productId: r.product_id,
-    productName: productNameById.get(r.product_id) ?? "—",
-    customerName: customerNameById.get(r.user_id) ?? "—",
+    productName: productNameById.get(r.product_id) ?? "-",
+    customerName: customerNameById.get(r.user_id) ?? "-",
     rating: r.rating,
     body: r.body,
     status: r.status,

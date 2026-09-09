@@ -14,7 +14,7 @@ const ORDER_STATUS_MESSAGES: Record<OrderStatus, string> = {
   out_for_delivery: "Your order is out for delivery.",
   delivered: "Your order has been delivered.",
   payment_failed: "There was a problem with your payment.",
-  stock_conflict: "There's an issue with your order — we'll be in touch.",
+  stock_conflict: "There's an issue with your order. We'll be in touch.",
 };
 
 /**

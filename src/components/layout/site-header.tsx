@@ -19,7 +19,7 @@ export function SiteHeader() {
           <MobileNav />
         </div>
 
-        <Link href="/" aria-label="ADEOLA Global Ltd — Home" className="flex shrink-0 items-center gap-2">
+        <Link href="/" aria-label="ADEOLA Global Ltd Home" className="flex shrink-0 items-center gap-2">
           <Image src="/brand/logo-mark.png" alt="" width={36} height={36} priority className="size-9" />
           <span className="hidden font-display text-display-m leading-none text-deep-plum sm:inline">
             ADEOLA

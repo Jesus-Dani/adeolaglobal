@@ -19,11 +19,11 @@ export default function ImportProductsPage() {
           One row per variant, grouped by <code className="text-charcoal">product_slug</code>. Only the
           first row for a new product needs <code className="text-charcoal">product_name</code>,{" "}
           <code className="text-charcoal">category_slug</code>, and{" "}
-          <code className="text-charcoal">base_price</code> — repeat the slug on following rows to add more
+          <code className="text-charcoal">base_price</code>. Repeat the slug on following rows to add more
           variants to the same product.
         </p>
         <p className="mt-2">
-          <strong className="text-charcoal">Re-importing a product replaces its variant set</strong> —
+          <strong className="text-charcoal">Re-importing a product replaces its variant set,</strong>{" "}
           matched by SKU, so re-uploading to update stock is safe, but leaving a variant&apos;s row out of
           the CSV deletes it.
         </p>

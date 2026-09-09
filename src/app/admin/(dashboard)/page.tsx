@@ -18,7 +18,7 @@ export default async function AdminDashboardPage() {
         <KpiCard label="Low Stock" value={String(stats.lowStockCount)} href="/admin/inventory" />
         <KpiCard
           label="Top Product"
-          value={stats.topProducts[0]?.name ?? "—"}
+          value={stats.topProducts[0]?.name ?? "-"}
           href="/admin/revenue"
         />
       </div>
