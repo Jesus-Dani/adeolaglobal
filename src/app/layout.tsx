@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
-import { Instrument_Sans } from "next/font/google";
+import { Fraunces } from "next/font/google";
 import { SerwistProvider } from "@serwist/next/react";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
-const instrumentSans = Instrument_Sans({
-  variable: "--font-instrument-sans",
+// Quincy CF (the font actually requested) is a paid font with no free
+// distribution — Fraunces is the closest free stand-in: a similarly warm,
+// characterful serif. Used across every text role (display and body/UI),
+// not just headings, per direct request.
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
@@ -35,7 +39,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${instrumentSans.variable} h-full antialiased`}>
+    <html lang="en" className={`${fraunces.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans">
         <a
           href="#main-content"

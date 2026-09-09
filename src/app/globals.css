@@ -7,8 +7,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-display: var(--font-instrument-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
   --font-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
   --color-plum: var(--plum);
   --color-deep-plum: var(--deep-plum);
