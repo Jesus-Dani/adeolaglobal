@@ -17,7 +17,7 @@ export default async function Home() {
         <h1 className="sr-only">ADEOLA Global Ltd: Nature. Beauty. Creativity.</h1>
         <Image
           src="/images/hero-banner.jpg"
-          alt="A woman holding ADEOLA Global's Rosemary Hair Growth Oil, surrounded by the full ADEOLA hair care line"
+          alt="A woman smiling outdoors next to ADEOLA Global's Rosemary Hair Growth Oil bottles"
           fill
           priority
           sizes="100vw"
