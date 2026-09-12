@@ -45,7 +45,7 @@ export function ProductForm({
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? categories[0]?.id ?? "");
   const [basePrice, setBasePrice] = useState(initial?.basePrice?.toString() ?? "");
   const [costPrice, setCostPrice] = useState(initial?.costPrice?.toString() ?? "");
-  const [status, setStatus] = useState<ProductStatus>(initial?.status ?? "draft");
+  const [status, setStatus] = useState<ProductStatus>(initial?.status ?? "active");
   const [isBestseller, setIsBestseller] = useState(initial?.isBestseller ?? false);
   const [isNew, setIsNew] = useState(initial?.isNew ?? false);
   const [images, setImages] = useState<string[]>(initial?.images ?? []);
@@ -168,7 +168,6 @@ export function ProductForm({
             onChange={(e) => setStatus(e.target.value as ProductStatus)}
             className="h-9 rounded-lg border border-border bg-white px-2 text-body-m"
           >
-            <option value="draft">Draft</option>
             <option value="active">Active</option>
             <option value="archived">Archived</option>
           </select>
