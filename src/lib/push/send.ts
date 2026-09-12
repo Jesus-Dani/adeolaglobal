@@ -2,12 +2,6 @@ import webpush from "web-push";
 import { createAdminClient } from "@/lib/supabase/server";
 import type { OrderStatus } from "@/lib/supabase/types";
 
-webpush.setVapidDetails(
-  process.env.VAPID_SUBJECT ?? "mailto:support@adeolaglobal.example",
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? "",
-  process.env.VAPID_PRIVATE_KEY ?? "",
-);
-
 const ORDER_STATUS_MESSAGES: Record<OrderStatus, string> = {
   pending: "Your order has been placed.",
   confirmed: "Your order has been confirmed.",
@@ -25,6 +19,17 @@ const ORDER_STATUS_MESSAGES: Record<OrderStatus, string> = {
  */
 export async function notifyOrderStatusChange(userId: string, orderNumber: string, status: OrderStatus) {
   if (!process.env.VAPID_PRIVATE_KEY || !process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY) return;
+
+  // Deliberately set here, not at module scope: this module gets imported
+  // by routes that run during Next's build-time page-data collection, and
+  // web-push validates the key eagerly and throws on an empty/malformed
+  // one — a crash-the-whole-build bug when VAPID env vars aren't set in
+  // that environment (e.g. a fresh Vercel deploy before they're configured).
+  webpush.setVapidDetails(
+    process.env.VAPID_SUBJECT ?? "mailto:support@adeolaglobal.example",
+    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY,
+  );
 
   const admin = createAdminClient();
   const { data: subscriptions, error } = await admin
