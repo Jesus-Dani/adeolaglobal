@@ -54,13 +54,6 @@ export interface OrderDetail {
     quantity: number;
     priceAtPurchase: number;
   }[];
-  payment: {
-    paystackReference: string;
-    status: string;
-    channel: string | null;
-    amount: number;
-    webhookVerifiedAt: string | null;
-  } | null;
 }
 
 export async function getOrderDetail(orderId: string): Promise<OrderDetail | null> {
@@ -102,13 +95,6 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
   const variantById = new Map((variants ?? []).map((v) => [v.id, v]));
   const productById = new Map((products ?? []).map((p) => [p.id, p]));
 
-  const { data: payment, error: paymentError } = await admin
-    .from("payments")
-    .select("paystack_reference, status, channel, amount, webhook_verified_at")
-    .eq("order_id", orderId)
-    .maybeSingle();
-  if (paymentError) throw paymentError;
-
   return {
     id: order.id,
     orderNumber: order.order_number,
@@ -133,14 +119,5 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
         priceAtPurchase: item.price_at_purchase,
       };
     }),
-    payment: payment
-      ? {
-          paystackReference: payment.paystack_reference,
-          status: payment.status,
-          channel: payment.channel,
-          amount: payment.amount,
-          webhookVerifiedAt: payment.webhook_verified_at,
-        }
-      : null,
   };
 }

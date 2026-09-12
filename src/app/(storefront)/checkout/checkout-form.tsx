@@ -2,25 +2,33 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/empty-state";
 import { HairlineDivider } from "@/components/hairline-divider";
+import { BankTransferDetails } from "@/components/bank-transfer-details";
 import { formatNaira } from "@/lib/currency";
 import { useCartStore, cartSubtotal } from "@/lib/store/cart";
+import { clearCartInDb } from "@/lib/store/cart-sync";
+import { createClient } from "@/lib/supabase/client";
 
 interface CheckoutFormProps {
+  isSignedIn: boolean;
   initialEmail: string;
   initialName: string;
   initialPhone: string;
 }
 
-export function CheckoutForm({ initialEmail, initialName, initialPhone }: CheckoutFormProps) {
+export function CheckoutForm({ isSignedIn, initialEmail, initialName, initialPhone }: CheckoutFormProps) {
+  const router = useRouter();
   const items = useCartStore((s) => s.items);
+  const clearCart = useCartStore((s) => s.clear);
 
   const [email, setEmail] = useState(initialEmail);
+  const [password, setPassword] = useState("");
   const [name, setName] = useState(initialName);
   const [phone, setPhone] = useState(initialPhone);
   const [address, setAddress] = useState("");
@@ -51,12 +59,39 @@ export function CheckoutForm({ initialEmail, initialName, initialPhone }: Checko
 
     setLoading(true);
     try {
+      const supabase = createClient();
+      let userId: string | null = null;
+
+      if (!isSignedIn) {
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { name } },
+        });
+
+        if (signUpError) {
+          setError(signUpError.message);
+          setLoading(false);
+          return;
+        }
+        if (!data.session) {
+          setError("Your account was created, but needs email verification before you can check out. Check your inbox.");
+          setLoading(false);
+          return;
+        }
+        userId = data.session.user.id;
+      } else {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        userId = user?.id ?? null;
+      }
+
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items: items.map((i) => ({ variantId: i.variantId, quantity: i.quantity })),
-          email,
           delivery: { name, phone, address, notes: notes || undefined },
           termsAccepted: acceptedTerms,
         }),
@@ -69,7 +104,12 @@ export function CheckoutForm({ initialEmail, initialName, initialPhone }: Checko
         return;
       }
 
-      window.location.href = body.authorizationUrl;
+      clearCart();
+      if (userId) {
+        clearCartInDb(userId).catch((err) => console.error("Failed to clear synced cart:", err));
+      }
+      router.push(`/account/orders/${body.orderId}`);
+      router.refresh();
     } catch {
       setError("Could not reach the server. Please check your connection and try again.");
       setLoading(false);
@@ -85,6 +125,39 @@ export function CheckoutForm({ initialEmail, initialName, initialPhone }: Checko
           </p>
         )}
 
+        {!isSignedIn && (
+          <section>
+            <h2 className="font-display text-display-m text-deep-plum">Create Your Account</h2>
+            <HairlineDivider className="mt-3 max-w-32" />
+            <p className="mt-3 text-body-s text-muted-foreground">
+              An account lets you track this order and check out faster next time.
+            </p>
+            <div className="mt-4 flex flex-col gap-4">
+              <label className="flex flex-col gap-1">
+                <span className="text-body-s font-medium text-charcoal">Email</span>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
+                  required
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="text-body-s font-medium text-charcoal">Password</span>
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="new-password"
+                  minLength={6}
+                  required
+                />
+              </label>
+            </div>
+          </section>
+        )}
+
         <section>
           <h2 className="font-display text-display-m text-deep-plum">Delivery Information</h2>
           <HairlineDivider className="mt-3 max-w-32" />
@@ -92,16 +165,6 @@ export function CheckoutForm({ initialEmail, initialName, initialPhone }: Checko
             <label className="flex flex-col gap-1">
               <span className="text-body-s font-medium text-charcoal">Full name</span>
               <Input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" required />
-            </label>
-            <label className="flex flex-col gap-1">
-              <span className="text-body-s font-medium text-charcoal">Email</span>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-                required
-              />
             </label>
             <label className="flex flex-col gap-1">
               <span className="text-body-s font-medium text-charcoal">Phone</span>
@@ -139,9 +202,11 @@ export function CheckoutForm({ initialEmail, initialName, initialPhone }: Checko
           <h2 className="font-display text-display-m text-deep-plum">Payment</h2>
           <HairlineDivider className="mt-3 max-w-32" />
           <p className="mt-4 text-body-s text-muted-foreground">
-            You&apos;ll be redirected to Paystack to complete payment by card, bank transfer, or USSD.
-            Delivery cost is arranged with you directly after checkout.
+            Delivery cost isn&apos;t included below. We&apos;ll arrange that with you directly after checkout.
           </p>
+          <div className="mt-4">
+            <BankTransferDetails amount={cartSubtotal(items)} />
+          </div>
 
           <label className="mt-4 flex items-start gap-2 text-body-s text-charcoal">
             <input
@@ -160,7 +225,7 @@ export function CheckoutForm({ initialEmail, initialName, initialPhone }: Checko
           </label>
 
           <Button type="submit" size="lg" disabled={loading} className="mt-4 w-full uppercase text-label tracking-wide">
-            {loading ? "Redirecting to payment..." : `Pay ${formatNaira(cartSubtotal(items))}`}
+            {loading ? "Placing order..." : `Place Order: ${formatNaira(cartSubtotal(items))}`}
           </Button>
         </section>
       </form>

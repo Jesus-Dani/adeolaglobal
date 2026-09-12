@@ -83,6 +83,13 @@ export async function mergeGuestCartIntoDb(userId: string, guestItems: CartItem[
   return fetchCartFromDb(userId);
 }
 
+/** Empties the signed-in user's DB-persisted cart, e.g. right after checkout, so the items just bought don't reappear next time they sign in elsewhere. */
+export async function clearCartInDb(userId: string) {
+  const supabase = createClient();
+  const { error } = await supabase.from("cart_items").delete().eq("cart_id", userId);
+  if (error) throw error;
+}
+
 export async function setCartItemQuantityInDb(userId: string, variantId: string, quantity: number) {
   const supabase = createClient();
   if (quantity <= 0) {

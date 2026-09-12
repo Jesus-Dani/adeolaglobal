@@ -17,7 +17,7 @@ Full product and technical specs live in [`docs/`](docs/):
 ## Stack
 
 Next.js (App Router, TypeScript) · Tailwind CSS + shadcn/ui · Supabase (Postgres,
-Auth, Storage) · Paystack · Vercel · Sentry.
+Auth, Storage) · manual bank transfer checkout · Vercel · Sentry.
 
 See `docs/TRD.md` §2 for the full stack table.
 

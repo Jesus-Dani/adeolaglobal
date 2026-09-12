@@ -1,11 +1,8 @@
-import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
-import { initializeTransaction } from "@/lib/paystack";
 
 interface CheckoutRequestBody {
   items: { variantId: string; quantity: number }[];
-  email: string;
   delivery: {
     name: string;
     phone: string;
@@ -29,7 +26,7 @@ export async function POST(request: NextRequest) {
   if (!body.items?.length) {
     return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
   }
-  if (!body.email || !body.delivery?.name || !body.delivery?.phone || !body.delivery?.address) {
+  if (!body.delivery?.name || !body.delivery?.phone || !body.delivery?.address) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
@@ -80,6 +77,9 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // No payment gateway step: the order lands as "pending" (awaiting bank
+    // transfer + admin confirmation) — see confirm_order_manually(), which
+    // is what actually decrements stock once an admin confirms the order.
     const { data: order, error: orderError } = await admin
       .from("orders")
       .insert({
@@ -103,39 +103,11 @@ export async function POST(request: NextRequest) {
       .insert(orderItemsToInsert.map((item) => ({ ...item, order_id: order.id })));
 
     if (itemsError) {
-      await admin.from("orders").update({ status: "payment_failed" }).eq("id", order.id);
+      await admin.from("orders").delete().eq("id", order.id);
       return NextResponse.json({ error: "Could not create order items" }, { status: 500 });
     }
 
-    const reference = `adg_${order.order_number}_${randomUUID()}`;
-
-    const { error: paymentError } = await admin.from("payments").insert({
-      order_id: order.id,
-      paystack_reference: reference,
-      amount: subtotal,
-    });
-
-    if (paymentError) {
-      await admin.from("orders").update({ status: "payment_failed" }).eq("id", order.id);
-      return NextResponse.json({ error: "Could not initialize payment" }, { status: 500 });
-    }
-
-    try {
-      const { authorizationUrl } = await initializeTransaction({
-        email: body.email,
-        amountNaira: subtotal,
-        reference,
-        callbackUrl: `${request.nextUrl.origin}/order/${reference}`,
-        metadata: { order_number: order.order_number },
-      });
-
-      return NextResponse.json({ authorizationUrl });
-    } catch (err) {
-      console.error("Paystack initialize failed:", err);
-      await admin.from("payments").update({ status: "failed" }).eq("order_id", order.id);
-      await admin.from("orders").update({ status: "payment_failed" }).eq("id", order.id);
-      return NextResponse.json({ error: "Could not reach the payment provider" }, { status: 502 });
-    }
+    return NextResponse.json({ orderId: order.id, orderNumber: order.order_number });
   } catch (err) {
     // Catches anything unexpected (e.g. Supabase admin client misconfigured)
     // so a checkout attempt always gets a clean error response instead of an

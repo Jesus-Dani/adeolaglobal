@@ -54,8 +54,8 @@ export default async function AdminAnalyticsPage() {
         </div>
         {dashboard.funnel.at(-1)?.distinctUsers === 0 && (
           <p className="mt-2 text-body-s text-muted-foreground">
-            No completed purchases are logged yet. This stage fires once Paystack webhook confirmation is
-            wired up.
+            No completed purchases are logged yet. This stage fires once an admin confirms an order&apos;s
+            bank transfer.
           </p>
         )}
       </div>

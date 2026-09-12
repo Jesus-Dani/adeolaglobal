@@ -21,7 +21,6 @@ export type OrderStatus =
   | "delivered"
   | "payment_failed"
   | "stock_conflict";
-export type PaymentStatus = "pending" | "success" | "failed";
 export type AnalyticsEventType = "product_view" | "search" | "add_to_cart" | "checkout_start" | "purchase";
 export type ReviewStatus = "pending" | "approved" | "rejected";
 
@@ -234,32 +233,6 @@ export interface Database {
           },
         ];
       };
-      payments: {
-        Row: {
-          id: string;
-          order_id: string;
-          paystack_reference: string;
-          status: PaymentStatus;
-          channel: string | null;
-          amount: number;
-          webhook_verified_at: string | null;
-          created_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["payments"]["Row"]> & {
-          order_id: string;
-          paystack_reference: string;
-          amount: number;
-        };
-        Update: Partial<Database["public"]["Tables"]["payments"]["Row"]>;
-        Relationships: [
-          {
-            foreignKeyName: "payments_order_id_fkey";
-            columns: ["order_id"];
-            referencedRelation: "orders";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
       analytics_events: {
         Row: {
           id: string;
@@ -330,8 +303,8 @@ export interface Database {
     };
     Views: Record<string, never>;
     Functions: {
-      confirm_order_payment: {
-        Args: { p_paystack_reference: string; p_channel: string };
+      confirm_order_manually: {
+        Args: { p_order_id: string };
         Returns: string;
       };
     };
@@ -348,7 +321,6 @@ export type CartItem = Database["public"]["Tables"]["cart_items"]["Row"];
 export type Wishlist = Database["public"]["Tables"]["wishlists"]["Row"];
 export type Order = Database["public"]["Tables"]["orders"]["Row"];
 export type OrderItem = Database["public"]["Tables"]["order_items"]["Row"];
-export type Payment = Database["public"]["Tables"]["payments"]["Row"];
 export type AnalyticsEvent = Database["public"]["Tables"]["analytics_events"]["Row"];
 export type Review = Database["public"]["Tables"]["reviews"]["Row"];
 export type PushSubscriptionRow = Database["public"]["Tables"]["push_subscriptions"]["Row"];

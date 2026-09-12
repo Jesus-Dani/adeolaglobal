@@ -1,6 +1,7 @@
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { HairlineDivider } from "@/components/hairline-divider";
+import { BankTransferDetails } from "@/components/bank-transfer-details";
 import { getMyOrderDetail } from "@/lib/orders";
 import { formatNaira } from "@/lib/currency";
 import { ORDER_STATUS_LABELS } from "@/lib/admin/order-status";
@@ -31,6 +32,12 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
         Placed {new Date(order.createdAt).toLocaleString("en-NG", { dateStyle: "medium", timeStyle: "short" })}
       </p>
       <HairlineDivider className="mt-4 max-w-40" />
+
+      {order.status === "pending" && (
+        <div className="mt-6">
+          <BankTransferDetails amount={order.subtotal} />
+        </div>
+      )}
 
       <div className="mt-6 overflow-x-auto rounded-xl border border-border bg-white">
         <table className="w-full text-left text-body-m">

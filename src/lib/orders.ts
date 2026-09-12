@@ -65,38 +65,6 @@ export async function getMyOrderDetail(
   return buildOrderDetail(supabase, order);
 }
 
-/**
- * Looks up an order by its Paystack payment reference — used by the order
- * confirmation page, which only has the reference (from the checkout
- * redirect URL), not the order id. Scoped to userId same as
- * getMyOrderDetail: RLS already restricts payments/orders reads to their
- * owner, but the explicit filter keeps that intent visible here too.
- */
-export async function getOrderByReference(
-  supabase: SupabaseClient<Database>,
-  userId: string,
-  reference: string,
-): Promise<MyOrderDetail | null> {
-  const { data: payment, error: paymentError } = await supabase
-    .from("payments")
-    .select("order_id")
-    .eq("paystack_reference", reference)
-    .maybeSingle();
-  if (paymentError) throw paymentError;
-  if (!payment) return null;
-
-  const { data: order, error: orderError } = await supabase
-    .from("orders")
-    .select(ORDER_COLUMNS)
-    .eq("id", payment.order_id)
-    .eq("user_id", userId)
-    .maybeSingle();
-  if (orderError) throw orderError;
-  if (!order) return null;
-
-  return buildOrderDetail(supabase, order);
-}
-
 async function buildOrderDetail(
   supabase: SupabaseClient<Database>,
   order: {

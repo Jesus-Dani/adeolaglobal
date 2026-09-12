@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { HairlineDivider } from "@/components/hairline-divider";
 import { getOrderDetail } from "@/lib/admin/orders";
+import { siteConfig } from "@/lib/site-config";
 import { StatusBadge } from "../status-badge";
 import { StatusControl } from "./status-control";
 
@@ -95,28 +96,12 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
 
           <div className="rounded-xl border border-border bg-white p-4">
             <h2 className="text-body-m font-medium text-charcoal">Payment</h2>
-            {order.payment ? (
-              <dl className="mt-2 space-y-1 text-body-s">
-                <div className="flex justify-between gap-4">
-                  <dt className="text-muted-foreground">Reference</dt>
-                  <dd className="text-charcoal">{order.payment.paystackReference}</dd>
-                </div>
-                <div className="flex justify-between gap-4">
-                  <dt className="text-muted-foreground">Status</dt>
-                  <dd className="text-charcoal">{order.payment.status}</dd>
-                </div>
-                <div className="flex justify-between gap-4">
-                  <dt className="text-muted-foreground">Channel</dt>
-                  <dd className="text-charcoal">{order.payment.channel ?? "-"}</dd>
-                </div>
-                <div className="flex justify-between gap-4">
-                  <dt className="text-muted-foreground">Amount</dt>
-                  <dd className="text-charcoal">{currency.format(order.payment.amount)}</dd>
-                </div>
-              </dl>
-            ) : (
-              <p className="mt-2 text-body-s text-muted-foreground">No payment record yet.</p>
-            )}
+            <p className="mt-2 text-body-s text-muted-foreground">
+              Customer pays by bank transfer to {siteConfig.bankTransfer.bankName},{" "}
+              {siteConfig.bankTransfer.accountNumber} ({siteConfig.bankTransfer.accountName}). Check the
+              account for {currency.format(order.subtotal)}, then set status to Confirmed below once it
+              lands, this decrements stock automatically.
+            </p>
           </div>
         </div>
       </div>

@@ -26,7 +26,9 @@ export function StatusControl({ orderId, currentStatus }: { orderId: string; cur
       setError(body.error);
       return;
     }
-    setStatus(next);
+    // Reflect the server's actual resulting status, not the one requested —
+    // confirming can resolve to "stock_conflict" instead if stock ran out.
+    setStatus(body.order.status);
     router.refresh();
   }
 
