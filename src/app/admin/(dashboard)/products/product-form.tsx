@@ -23,7 +23,7 @@ function slugify(value: string): string {
 }
 
 function emptyVariant(): ProductVariantInput {
-  return { sku: "", stockCount: 0, lowStockThreshold: 5 };
+  return { stockCount: 0, lowStockThreshold: 5 };
 }
 
 export function ProductForm({
@@ -81,11 +81,6 @@ export function ProductForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-
-    if (variants.some((v) => !v.sku)) {
-      setError("Every variant needs a SKU.");
-      return;
-    }
 
     setSaving(true);
     const payload: ProductInput = {
@@ -247,12 +242,11 @@ export function ProductForm({
 
         <div className="mt-3 flex flex-col gap-3">
           {variants.map((variant, index) => (
-            <div key={index} className="grid grid-cols-2 gap-2 rounded-xl border border-border bg-white p-3 sm:grid-cols-4 lg:grid-cols-8">
+            <div key={index} className="grid grid-cols-2 gap-2 rounded-xl border border-border bg-white p-3 sm:grid-cols-4 lg:grid-cols-7">
               <Input placeholder="Size" value={variant.size ?? ""} onChange={(e) => updateVariant(index, { size: e.target.value })} />
               <Input placeholder="Colour" value={variant.colour ?? ""} onChange={(e) => updateVariant(index, { colour: e.target.value })} />
               <Input placeholder="Material" value={variant.material ?? ""} onChange={(e) => updateVariant(index, { material: e.target.value })} />
               <Input placeholder="Style" value={variant.style ?? ""} onChange={(e) => updateVariant(index, { style: e.target.value })} />
-              <Input placeholder="SKU" value={variant.sku} onChange={(e) => updateVariant(index, { sku: e.target.value })} required />
               <Input
                 type="number"
                 placeholder="Price override"

@@ -7,10 +7,16 @@ export interface ProductVariantInput {
   colour?: string | null;
   material?: string | null;
   style?: string | null;
-  sku: string;
+  /** Optional in the admin product form (auto-generated on insert if omitted); CSV import always supplies a real one, since it's what re-import matching keys on. */
+  sku?: string;
   priceOverride?: number | null;
   stockCount: number;
   lowStockThreshold?: number;
+}
+
+/** Admins never see or choose this — it only exists to satisfy the DB's not-null/unique constraint. */
+function generateSku(): string {
+  return `AUTO-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
 }
 
 export interface ProductInput {
@@ -59,6 +65,9 @@ export async function syncProductVariants(
   const toInsert = variants.filter((v) => !v.id);
 
   for (const variant of toUpdate) {
+    // sku is deliberately not touched here — it's not editable via the
+    // admin form, and an existing variant's sku (real, from CSV import, or
+    // auto-generated on a prior insert) should never change on a plain edit.
     const { error } = await admin
       .from("product_variants")
       .update({
@@ -66,7 +75,6 @@ export async function syncProductVariants(
         colour: variant.colour ?? null,
         material: variant.material ?? null,
         style: variant.style ?? null,
-        sku: variant.sku,
         price_override: variant.priceOverride ?? null,
         stock_count: variant.stockCount,
         low_stock_threshold: variant.lowStockThreshold ?? 5,
@@ -83,7 +91,7 @@ export async function syncProductVariants(
         colour: variant.colour ?? null,
         material: variant.material ?? null,
         style: variant.style ?? null,
-        sku: variant.sku,
+        sku: variant.sku ?? generateSku(),
         price_override: variant.priceOverride ?? null,
         stock_count: variant.stockCount,
         low_stock_threshold: variant.lowStockThreshold ?? 5,
