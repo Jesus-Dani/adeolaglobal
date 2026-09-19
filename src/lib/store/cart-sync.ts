@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { getVariantPrice } from "@/lib/product-helpers";
 import type { CartItem } from "./cart";
 
 function variantLabel(v: { size: string | null; colour: string | null; material: string | null; style: string | null }) {
@@ -26,7 +27,7 @@ export async function fetchCartFromDb(userId: string): Promise<CartItem[]> {
   const { data: variants, error: variantsError } = await supabase
     .from("product_variants")
     .select(
-      "id, size, colour, material, style, price_override, stock_count, products(id, slug, name, base_price, images)",
+      "id, size, colour, material, style, price_override, stock_count, products(id, slug, name, base_price, sale_price, images)",
     )
     .in(
       "id",
@@ -48,7 +49,7 @@ export async function fetchCartFromDb(userId: string): Promise<CartItem[]> {
         productName: product.name,
         image: product.images[0] ?? null,
         variantLabel: variantLabel(variant),
-        unitPrice: variant.price_override ?? product.base_price,
+        unitPrice: getVariantPrice(variant, product).price,
         quantity: item.quantity,
         stockCount: variant.stock_count,
       },

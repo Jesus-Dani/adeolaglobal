@@ -1,11 +1,12 @@
 import { createClient } from "@/lib/supabase/client";
+import { getVariantPrice } from "@/lib/product-helpers";
 import type { WishlistItem } from "./wishlist";
 
 export async function fetchWishlistFromDb(userId: string): Promise<WishlistItem[]> {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("wishlists")
-    .select("products(id, slug, name, base_price, images)")
+    .select("products(id, slug, name, base_price, sale_price, images)")
     .eq("user_id", userId);
 
   if (error) throw error;
@@ -18,7 +19,7 @@ export async function fetchWishlistFromDb(userId: string): Promise<WishlistItem[
             productSlug: row.products.slug,
             productName: row.products.name,
             image: row.products.images[0] ?? null,
-            price: row.products.base_price,
+            price: getVariantPrice({ price_override: null }, row.products).price,
           },
         ]
       : [],

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Heart, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatNaira } from "@/lib/currency";
-import { isOutOfStock, type ProductWithVariants } from "@/lib/product-helpers";
+import { isOutOfStock, getVariantPrice, type ProductWithVariants } from "@/lib/product-helpers";
 import { useCartStore } from "@/lib/store/cart";
 import { useWishlistStore } from "@/lib/store/wishlist";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,7 @@ export function ProductCard({
 
   const singleVariant = product.product_variants.length === 1 ? product.product_variants[0] : null;
   const image = product.images[0] ?? null;
+  const { price, compareAtPrice } = getVariantPrice(singleVariant ?? { price_override: null }, product);
 
   function handleAddToCart() {
     if (!singleVariant || outOfStock) return;
@@ -38,7 +39,7 @@ export function ProductCard({
         variantLabel: [singleVariant.size, singleVariant.colour, singleVariant.material, singleVariant.style]
           .filter(Boolean)
           .join(" / ") || null,
-        unitPrice: singleVariant.price_override ?? product.base_price,
+        unitPrice: price,
         stockCount: singleVariant.stock_count,
       },
       1,
@@ -68,6 +69,10 @@ export function ProductCard({
             <span className="rounded-md bg-muted px-2 py-0.5 text-body-s font-medium text-muted-foreground">
               Out of stock
             </span>
+          ) : compareAtPrice ? (
+            <span className="rounded-md bg-destructive/10 px-2 py-0.5 text-body-s font-medium text-destructive">
+              Sale
+            </span>
           ) : product.is_bestseller ? (
             <span className="rounded-md bg-gold/15 px-2 py-0.5 text-body-s font-medium text-deep-plum">
               Bestseller
@@ -89,7 +94,7 @@ export function ProductCard({
               productSlug: product.slug,
               productName: product.name,
               image,
-              price: product.base_price,
+              price,
             })
           }
           className="absolute top-2 right-2 flex size-8 items-center justify-center bg-white/90 shadow-sm transition-colors hover:bg-white"
@@ -105,7 +110,14 @@ export function ProductCard({
         <Link href={`/shop/${product.slug}`}>
           <Heading className="line-clamp-2 text-body-m text-charcoal">{product.name}</Heading>
         </Link>
-        <p className="text-price font-bold tabular-nums text-plum">{formatNaira(product.base_price)}</p>
+        <p className="flex items-baseline gap-2">
+          <span className="text-price font-bold tabular-nums text-plum">{formatNaira(price)}</span>
+          {compareAtPrice && (
+            <span className="text-body-s tabular-nums text-muted-foreground line-through">
+              {formatNaira(compareAtPrice)}
+            </span>
+          )}
+        </p>
 
         {singleVariant ? (
           <Button

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { getVariantPrice } from "@/lib/product-helpers";
 
 interface CheckoutRequestBody {
   items: { variantId: string; quantity: number }[];
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
     const variantIds = body.items.map((i) => i.variantId);
     const { data: variants, error: variantsError } = await admin
       .from("product_variants")
-      .select("id, price_override, stock_count, products(base_price, status)")
+      .select("id, price_override, stock_count, products(base_price, sale_price, status)")
       .in("id", variantIds);
 
     if (variantsError) {
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "One or more items are out of stock" }, { status: 409 });
       }
 
-      const unitPrice = variant.price_override ?? variant.products.base_price;
+      const { price: unitPrice } = getVariantPrice(variant, variant.products);
       subtotal += unitPrice * item.quantity;
       orderItemsToInsert.push({
         variant_id: item.variantId,

@@ -14,6 +14,9 @@ export async function POST(request: NextRequest) {
       { status: 400 },
     );
   }
+  if (body.salePrice != null && body.salePrice >= body.basePrice) {
+    return NextResponse.json({ error: "Sale price must be lower than the base price" }, { status: 400 });
+  }
 
   const admin = createAdminClient();
 
@@ -25,6 +28,7 @@ export async function POST(request: NextRequest) {
       description: body.description ?? null,
       category_id: body.categoryId,
       base_price: body.basePrice,
+      sale_price: body.salePrice ?? null,
       cost_price: body.costPrice ?? null,
       status: body.status,
       is_bestseller: body.isBestseller ?? false,

@@ -44,6 +44,7 @@ export function ProductForm({
   const [description, setDescription] = useState(initial?.description ?? "");
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? categories[0]?.id ?? "");
   const [basePrice, setBasePrice] = useState(initial?.basePrice?.toString() ?? "");
+  const [salePrice, setSalePrice] = useState(initial?.salePrice?.toString() ?? "");
   const [costPrice, setCostPrice] = useState(initial?.costPrice?.toString() ?? "");
   const [status, setStatus] = useState<ProductStatus>(initial?.status ?? "active");
   const [isBestseller, setIsBestseller] = useState(initial?.isBestseller ?? false);
@@ -82,6 +83,11 @@ export function ProductForm({
     e.preventDefault();
     setError(null);
 
+    if (salePrice && Number(salePrice) >= Number(basePrice)) {
+      setError("Sale price must be lower than the base price.");
+      return;
+    }
+
     setSaving(true);
     const payload: ProductInput = {
       name,
@@ -89,6 +95,7 @@ export function ProductForm({
       description: description || null,
       categoryId,
       basePrice: Number(basePrice),
+      salePrice: salePrice ? Number(salePrice) : null,
       costPrice: costPrice ? Number(costPrice) : null,
       status,
       isBestseller,
@@ -170,6 +177,10 @@ export function ProductForm({
         <label className="flex flex-col gap-1">
           <span className="text-body-s font-medium text-charcoal">Base price (₦)</span>
           <Input type="number" min={0} step="0.01" value={basePrice} onChange={(e) => setBasePrice(e.target.value)} required />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-body-s font-medium text-charcoal">Sale price (₦), optional</span>
+          <Input type="number" min={0} step="0.01" value={salePrice} onChange={(e) => setSalePrice(e.target.value)} placeholder="Leave blank for no sale" />
         </label>
         <label className="flex flex-col gap-1">
           <span className="text-body-s font-medium text-charcoal">Cost price (₦), admin only</span>

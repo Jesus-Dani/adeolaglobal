@@ -10,6 +10,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   const { id } = await params;
   const body: ProductInput = await request.json();
 
+  if (body.salePrice != null && body.salePrice >= body.basePrice) {
+    return NextResponse.json({ error: "Sale price must be lower than the base price" }, { status: 400 });
+  }
+
   const admin = createAdminClient();
 
   const { error: productError } = await admin
@@ -20,6 +24,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       description: body.description ?? null,
       category_id: body.categoryId,
       base_price: body.basePrice,
+      sale_price: body.salePrice ?? null,
       cost_price: body.costPrice ?? null,
       status: body.status,
       is_bestseller: body.isBestseller ?? false,

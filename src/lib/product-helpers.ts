@@ -19,3 +19,32 @@ export function isOutOfStock(product: Pick<ProductWithVariants, "product_variant
     product.product_variants.every((v) => v.stock_count <= 0)
   );
 }
+
+export interface VariantPrice {
+  /** What the customer actually pays. */
+  price: number;
+  /** The struck-through "was" price, or null when this variant isn't on sale. */
+  compareAtPrice: number | null;
+}
+
+/**
+ * The one place price/sale precedence is decided: a variant's own
+ * price_override always wins outright (it was set deliberately for that
+ * variant, unrelated to any storefront-wide sale). Otherwise, a product's
+ * sale_price applies when it's actually lower than base_price. Every
+ * consumer (storefront display, add-to-cart, and checkout's server-side
+ * repricing) calls this instead of recomputing the rule itself, so they
+ * can never quietly drift out of sync with each other.
+ */
+export function getVariantPrice(
+  variant: { price_override: number | null },
+  product: { base_price: number; sale_price: number | null },
+): VariantPrice {
+  if (variant.price_override != null) {
+    return { price: variant.price_override, compareAtPrice: null };
+  }
+  if (product.sale_price != null && product.sale_price < product.base_price) {
+    return { price: product.sale_price, compareAtPrice: product.base_price };
+  }
+  return { price: product.base_price, compareAtPrice: null };
+}

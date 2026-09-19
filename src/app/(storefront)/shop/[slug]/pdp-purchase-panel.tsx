@@ -5,7 +5,7 @@ import { Heart, Minus, Plus, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatNaira } from "@/lib/currency";
-import { isOutOfStock, type ProductWithVariants } from "@/lib/product-helpers";
+import { isOutOfStock, getVariantPrice, type ProductWithVariants } from "@/lib/product-helpers";
 import { useCartStore } from "@/lib/store/cart";
 import { useWishlistStore } from "@/lib/store/wishlist";
 import {
@@ -35,7 +35,7 @@ export function PdpPurchasePanel({ product }: { product: ProductWithVariants }) 
 
   const selectedVariant = resolveVariant(variants, selection);
   const productOutOfStock = isOutOfStock(product);
-  const price = selectedVariant?.price_override ?? product.base_price;
+  const { price, compareAtPrice } = getVariantPrice(selectedVariant ?? { price_override: null }, product);
 
   function handleAddToCart() {
     if (!selectedVariant) return;
@@ -70,7 +70,14 @@ export function PdpPurchasePanel({ product }: { product: ProductWithVariants }) 
 
   return (
     <div className="flex flex-col gap-5">
-      <p className="text-price font-bold tabular-nums text-plum">{formatNaira(price)}</p>
+      <p className="flex items-baseline gap-2">
+        <span className="text-price font-bold tabular-nums text-plum">{formatNaira(price)}</span>
+        {compareAtPrice && (
+          <span className="text-body-m tabular-nums text-muted-foreground line-through">
+            {formatNaira(compareAtPrice)}
+          </span>
+        )}
+      </p>
 
       {activeAttributes.map((attr) => (
         <div key={attr} className="flex flex-col gap-2">
@@ -149,7 +156,7 @@ export function PdpPurchasePanel({ product }: { product: ProductWithVariants }) 
               productSlug: product.slug,
               productName: product.name,
               image: product.images[0] ?? null,
-              price: product.base_price,
+              price,
             })
           }
           className="flex size-11 shrink-0 items-center justify-center border border-border hover:border-plum"

@@ -1,14 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Category } from "@/lib/supabase/types";
-import { isOutOfStock, type ProductWithVariants } from "@/lib/product-helpers";
+import { isOutOfStock, getVariantPrice, type ProductWithVariants } from "@/lib/product-helpers";
 
-export { isOutOfStock, type ProductWithVariants };
+export { isOutOfStock, getVariantPrice, type ProductWithVariants };
 
 // Explicit column list — never `select('*')`. cost_price is admin-only (see
 // the Phase 1 migration's column-privilege revoke); a storefront query for
 // it would simply fail.
 const PRODUCT_COLUMNS =
-  "id, category_id, name, slug, description, base_price, images, status, is_bestseller, is_new, created_at, updated_at";
+  "id, category_id, name, slug, description, base_price, sale_price, images, status, is_bestseller, is_new, created_at, updated_at";
 
 const VARIANT_COLUMNS = "id, size, colour, material, style, sku, price_override, stock_count";
 

@@ -25,6 +25,8 @@ export interface ProductInput {
   description?: string | null;
   categoryId: string;
   basePrice: number;
+  /** When set and lower than basePrice, the storefront shows basePrice struck through next to this. */
+  salePrice?: number | null;
   costPrice?: number | null;
   status: ProductStatus;
   isBestseller?: boolean;

@@ -16,7 +16,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
       admin
         .from("products")
         .select(
-          "name, slug, description, category_id, base_price, cost_price, status, is_bestseller, is_new, images, product_variants(id, size, colour, material, style, sku, price_override, stock_count, low_stock_threshold)",
+          "name, slug, description, category_id, base_price, sale_price, cost_price, status, is_bestseller, is_new, images, product_variants(id, size, colour, material, style, sku, price_override, stock_count, low_stock_threshold)",
         )
         .eq("id", id)
         .maybeSingle(),
@@ -32,6 +32,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
     description: product.description,
     categoryId: product.category_id,
     basePrice: product.base_price,
+    salePrice: product.sale_price,
     costPrice: product.cost_price,
     status: product.status,
     isBestseller: product.is_bestseller,

@@ -10,7 +10,7 @@ export default async function AdminProductsPage() {
   const { data: products, error } = await admin
     .from("products")
     .select(
-      "id, name, slug, base_price, status, is_bestseller, is_new, categories(name), product_variants(stock_count)",
+      "id, name, slug, base_price, sale_price, status, is_bestseller, is_new, categories(name), product_variants(stock_count)",
     )
     .order("created_at", { ascending: false });
 
@@ -21,6 +21,7 @@ export default async function AdminProductsPage() {
     name: p.name,
     slug: p.slug,
     basePrice: p.base_price,
+    salePrice: p.sale_price,
     status: p.status,
     isBestseller: p.is_bestseller,
     isNew: p.is_new,

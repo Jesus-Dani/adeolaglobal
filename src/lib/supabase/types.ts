@@ -65,6 +65,7 @@ export interface Database {
           slug: string;
           description: string | null;
           base_price: number;
+          sale_price: number | null;
           cost_price: number | null;
           images: string[];
           status: ProductStatus;
@@ -189,6 +190,7 @@ export interface Database {
           delivery_notes: string | null;
           terms_accepted: boolean;
           subtotal: number;
+          payment_proof_path: string | null;
           created_at: string;
           updated_at: string;
         };

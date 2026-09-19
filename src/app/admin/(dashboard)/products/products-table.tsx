@@ -12,6 +12,7 @@ interface ProductRow {
   name: string;
   slug: string;
   basePrice: number;
+  salePrice: number | null;
   status: ProductStatus;
   isBestseller: boolean;
   isNew: boolean;
@@ -79,7 +80,18 @@ export function ProductsTable({ products }: { products: ProductRow[] }) {
                   )}
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">{product.categoryName}</td>
-                <td className="px-4 py-3 tabular-nums text-charcoal">{formatNaira(product.basePrice)}</td>
+                <td className="px-4 py-3 tabular-nums text-charcoal">
+                  {product.salePrice != null && product.salePrice < product.basePrice ? (
+                    <span className="flex items-center gap-1.5">
+                      {formatNaira(product.salePrice)}
+                      <span className="text-body-s text-muted-foreground line-through">
+                        {formatNaira(product.basePrice)}
+                      </span>
+                    </span>
+                  ) : (
+                    formatNaira(product.basePrice)
+                  )}
+                </td>
                 <td className="px-4 py-3 tabular-nums text-charcoal">{product.totalStock}</td>
                 <td className="px-4 py-3">
                   <span
