@@ -2,18 +2,20 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ShoppingBag } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ShoppingBag, MessageCircle } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/empty-state";
 import { HairlineDivider } from "@/components/hairline-divider";
 import { BankTransferDetails } from "@/components/bank-transfer-details";
+import { PaymentProofUpload } from "@/components/payment-proof-upload";
 import { formatNaira } from "@/lib/currency";
 import { useCartStore, cartSubtotal } from "@/lib/store/cart";
 import { clearCartInDb } from "@/lib/store/cart-sync";
 import { createClient } from "@/lib/supabase/client";
+import { whatsappHref } from "@/lib/site-config";
+import { cn } from "@/lib/utils";
 
 interface CheckoutFormProps {
   isSignedIn: boolean;
@@ -23,7 +25,6 @@ interface CheckoutFormProps {
 }
 
 export function CheckoutForm({ isSignedIn, initialEmail, initialName, initialPhone }: CheckoutFormProps) {
-  const router = useRouter();
   const items = useCartStore((s) => s.items);
   const clearCart = useCartStore((s) => s.clear);
 
@@ -36,8 +37,13 @@ export function CheckoutForm({ isSignedIn, initialEmail, initialName, initialPho
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [completedOrder, setCompletedOrder] = useState<{
+    id: string;
+    orderNumber: string;
+    subtotal: number;
+  } | null>(null);
 
-  if (items.length === 0) {
+  if (items.length === 0 && !completedOrder) {
     return (
       <EmptyState
         icon={ShoppingBag}
@@ -45,6 +51,43 @@ export function CheckoutForm({ isSignedIn, initialEmail, initialName, initialPho
         body="Add something you'll love before checking out."
         action={{ label: "Shop now", href: "/shop" }}
       />
+    );
+  }
+
+  // Kept on this same page rather than redirecting to /account/orders/[id] —
+  // bank details, the proof upload, and the WhatsApp handoff all happen in
+  // one place right after placing the order, not split across a navigation.
+  if (completedOrder) {
+    const whatsappMessage = `Hi ADEOLA Global, I've just placed order ${completedOrder.orderNumber} for ${formatNaira(completedOrder.subtotal)} and made the bank transfer. Please confirm my order.`;
+
+    return (
+      <div className="mx-auto flex max-w-lg flex-col gap-6">
+        <div>
+          <h2 className="font-display text-display-m text-deep-plum">Order placed: {completedOrder.orderNumber}</h2>
+          <p className="mt-2 text-body-m text-muted-foreground">
+            One last step: complete the transfer below, then let us know on WhatsApp so we can confirm your
+            order right away.
+          </p>
+        </div>
+
+        <BankTransferDetails amount={completedOrder.subtotal} />
+
+        <a
+          href={whatsappHref(whatsappMessage)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(buttonVariants({ size: "lg" }), "w-full gap-2 bg-[#25D366] uppercase text-label tracking-wide hover:bg-[#1ebe57]")}
+        >
+          <MessageCircle className="size-5" strokeWidth={1.5} />
+          Proceed to WhatsApp
+        </a>
+
+        <PaymentProofUpload orderId={completedOrder.id} existingUrl={null} />
+
+        <Link href="/account/orders" className="text-center text-body-s text-plum hover:underline">
+          View all your orders
+        </Link>
+      </div>
     );
   }
 
@@ -126,8 +169,11 @@ export function CheckoutForm({ isSignedIn, initialEmail, initialName, initialPho
 
       if (isSignedIn) clearCart();
       clearCartInDb(userId).catch((err) => console.error("Failed to clear synced cart:", err));
-      router.push(`/account/orders/${body.orderId}`);
-      router.refresh();
+      setCompletedOrder({
+        id: body.orderId,
+        orderNumber: body.orderNumber,
+        subtotal: cartSubtotal(checkoutItems),
+      });
     } catch {
       setError("Could not reach the server. Please check your connection and try again.");
       setLoading(false);

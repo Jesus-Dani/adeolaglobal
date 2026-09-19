@@ -11,6 +11,11 @@ export function PaymentProofUpload({ orderId, existingUrl }: { orderId: string; 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Shows immediately on a successful upload without waiting on a server
+  // round-trip for a fresh signed URL — needed when this renders somewhere
+  // with no server component to refresh (the checkout success view), and a
+  // nicer instant reflection everywhere else too.
+  const [localPreviewUrl, setLocalPreviewUrl] = useState<string | null>(null);
 
   async function handleUpload(file: File) {
     setUploading(true);
@@ -23,19 +28,19 @@ export function PaymentProofUpload({ orderId, existingUrl }: { orderId: string; 
       body: formData,
     });
     const body = await response.json();
+    setUploading(false);
 
     if (!response.ok) {
-      setUploading(false);
       setError(body.error);
       return;
     }
-    // Left true through the refresh — the parent server component re-fetches
-    // a fresh signed existingUrl and this component just re-renders with it,
-    // no local "just uploaded" flag needed.
+    setLocalPreviewUrl(URL.createObjectURL(file));
     router.refresh();
   }
 
-  if (existingUrl) {
+  const displayUrl = localPreviewUrl ?? existingUrl;
+
+  if (displayUrl) {
     return (
       <div className="rounded-xl border border-border bg-white p-4">
         <div className="flex items-center gap-2 text-body-m font-medium text-charcoal">
@@ -43,7 +48,7 @@ export function PaymentProofUpload({ orderId, existingUrl }: { orderId: string; 
           Payment proof uploaded
         </div>
         <div className="relative mt-3 aspect-video w-full max-w-xs overflow-hidden rounded-lg border border-border">
-          <Image src={existingUrl} alt="Uploaded payment proof" fill sizes="320px" className="object-contain" />
+          <Image src={displayUrl} alt="Uploaded payment proof" fill sizes="320px" className="object-contain" unoptimized={!!localPreviewUrl} />
         </div>
         <button
           type="button"

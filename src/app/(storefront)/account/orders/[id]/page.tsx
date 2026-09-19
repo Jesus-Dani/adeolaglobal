@@ -2,7 +2,7 @@ import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { HairlineDivider } from "@/components/hairline-divider";
 import { BankTransferDetails } from "@/components/bank-transfer-details";
-import { PaymentProofUpload } from "./payment-proof-upload";
+import { PaymentProofUpload } from "@/components/payment-proof-upload";
 import { getMyOrderDetail } from "@/lib/orders";
 import { getPaymentProofUrl } from "@/lib/payment-proof";
 import { formatNaira } from "@/lib/currency";
