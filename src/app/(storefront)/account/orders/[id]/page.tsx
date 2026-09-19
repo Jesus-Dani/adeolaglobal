@@ -2,7 +2,9 @@ import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { HairlineDivider } from "@/components/hairline-divider";
 import { BankTransferDetails } from "@/components/bank-transfer-details";
+import { PaymentProofUpload } from "./payment-proof-upload";
 import { getMyOrderDetail } from "@/lib/orders";
+import { getPaymentProofUrl } from "@/lib/payment-proof";
 import { formatNaira } from "@/lib/currency";
 import { ORDER_STATUS_LABELS } from "@/lib/admin/order-status";
 
@@ -20,6 +22,8 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   const order = await getMyOrderDetail(supabase, user.id, id);
   if (!order) notFound();
 
+  const proofUrl = order.status === "pending" ? await getPaymentProofUrl(order.paymentProofPath) : null;
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
       <div className="flex items-center justify-between">
@@ -34,8 +38,9 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
       <HairlineDivider className="mt-4 max-w-40" />
 
       {order.status === "pending" && (
-        <div className="mt-6">
+        <div className="mt-6 flex flex-col gap-4">
           <BankTransferDetails amount={order.subtotal} />
+          <PaymentProofUpload orderId={order.id} existingUrl={proofUrl} />
         </div>
       )}
 

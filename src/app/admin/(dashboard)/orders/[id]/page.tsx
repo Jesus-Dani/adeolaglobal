@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { HairlineDivider } from "@/components/hairline-divider";
 import { getOrderDetail } from "@/lib/admin/orders";
+import { getPaymentProofUrl } from "@/lib/payment-proof";
 import { siteConfig } from "@/lib/site-config";
 import { StatusBadge } from "../status-badge";
 import { StatusControl } from "./status-control";
@@ -13,6 +15,8 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   const { id } = await params;
   const order = await getOrderDetail(id);
   if (!order) notFound();
+
+  const proofUrl = await getPaymentProofUrl(order.paymentProofPath);
 
   return (
     <div>
@@ -102,6 +106,16 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
               account for {currency.format(order.subtotal)}, then set status to Confirmed below once it
               lands, this decrements stock automatically.
             </p>
+            {proofUrl ? (
+              <a href={proofUrl} target="_blank" rel="noopener noreferrer" className="mt-3 block">
+                <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-border">
+                  <Image src={proofUrl} alt="Customer-submitted payment proof" fill sizes="320px" className="object-contain" />
+                </div>
+                <p className="mt-1 text-body-s text-plum hover:underline">View full size</p>
+              </a>
+            ) : (
+              <p className="mt-3 text-body-s text-muted-foreground">No payment proof uploaded yet.</p>
+            )}
           </div>
         </div>
       </div>

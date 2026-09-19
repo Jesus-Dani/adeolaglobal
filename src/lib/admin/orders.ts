@@ -46,6 +46,7 @@ export interface OrderDetail {
   deliveryNotes: string | null;
   subtotal: number;
   createdAt: string;
+  paymentProofPath: string | null;
   items: {
     id: string;
     productName: string;
@@ -62,7 +63,7 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
   const { data: order, error: orderError } = await admin
     .from("orders")
     .select(
-      "id, order_number, status, delivery_name, delivery_phone, delivery_address, delivery_notes, subtotal, created_at",
+      "id, order_number, status, delivery_name, delivery_phone, delivery_address, delivery_notes, subtotal, created_at, payment_proof_path",
     )
     .eq("id", orderId)
     .maybeSingle();
@@ -105,6 +106,7 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
     deliveryNotes: order.delivery_notes,
     subtotal: order.subtotal,
     createdAt: order.created_at,
+    paymentProofPath: order.payment_proof_path,
     items: (items ?? []).map((item) => {
       const variant = variantById.get(item.variant_id);
       const product = variant ? productById.get(variant.product_id) : undefined;

@@ -14,6 +14,14 @@ const nextConfig: NextConfig = {
         hostname: "*.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
+      {
+        // Payment proofs live in a private bucket, served only via
+        // short-lived signed URLs — a different Storage path shape
+        // (/object/sign/... instead of /object/public/...).
+        protocol: "https",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/sign/**",
+      },
     ],
   },
 };

@@ -36,6 +36,7 @@ export interface MyOrderDetail {
   deliveryNotes: string | null;
   subtotal: number;
   createdAt: string;
+  paymentProofPath: string | null;
   items: {
     id: string;
     productName: string;
@@ -46,7 +47,7 @@ export interface MyOrderDetail {
 }
 
 const ORDER_COLUMNS =
-  "id, order_number, status, delivery_name, delivery_phone, delivery_address, delivery_notes, subtotal, created_at";
+  "id, order_number, status, delivery_name, delivery_phone, delivery_address, delivery_notes, subtotal, created_at, payment_proof_path";
 
 export async function getMyOrderDetail(
   supabase: SupabaseClient<Database>,
@@ -77,6 +78,7 @@ async function buildOrderDetail(
     delivery_notes: string | null;
     subtotal: number;
     created_at: string;
+    payment_proof_path: string | null;
   },
 ): Promise<MyOrderDetail> {
   const orderId = order.id;
@@ -114,6 +116,7 @@ async function buildOrderDetail(
     deliveryNotes: order.delivery_notes,
     subtotal: order.subtotal,
     createdAt: order.created_at,
+    paymentProofPath: order.payment_proof_path,
     items: (items ?? []).map((item) => {
       const variant = variantById.get(item.variant_id);
       const product = variant ? productById.get(variant.product_id) : undefined;
