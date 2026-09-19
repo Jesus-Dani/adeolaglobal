@@ -60,9 +60,21 @@ export function CheckoutForm({ isSignedIn, initialEmail, initialName, initialPho
     setLoading(true);
     try {
       const supabase = createClient();
-      let userId: string | null = null;
+      let userId: string;
+      const checkoutItems = items;
 
       if (!isSignedIn) {
+        // Cleared *before* signUp(), not after: signUp() fires a SIGNED_IN
+        // event that AuthSync (mounted globally) reacts to by merging
+        // whatever's in this store into the new account's DB cart — an
+        // async call we have no way to wait on from here. If we clear
+        // afterward instead, that merge can race our own clear and win,
+        // silently repopulating the DB (and this store) with the item(s)
+        // just bought. Emptying the store first means AuthSync's merge
+        // finds nothing to merge. Restored on any failure below so a
+        // failed signup/order doesn't cost the customer their cart.
+        clearCart();
+
         const { data, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
@@ -70,11 +82,13 @@ export function CheckoutForm({ isSignedIn, initialEmail, initialName, initialPho
         });
 
         if (signUpError) {
+          useCartStore.getState().replaceAll(checkoutItems);
           setError(signUpError.message);
           setLoading(false);
           return;
         }
         if (!data.session) {
+          useCartStore.getState().replaceAll(checkoutItems);
           setError("Your account was created, but needs email verification before you can check out. Check your inbox.");
           setLoading(false);
           return;
@@ -84,14 +98,19 @@ export function CheckoutForm({ isSignedIn, initialEmail, initialName, initialPho
         const {
           data: { user },
         } = await supabase.auth.getUser();
-        userId = user?.id ?? null;
+        if (!user) {
+          setError("Your session expired. Please sign in again.");
+          setLoading(false);
+          return;
+        }
+        userId = user.id;
       }
 
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: items.map((i) => ({ variantId: i.variantId, quantity: i.quantity })),
+          items: checkoutItems.map((i) => ({ variantId: i.variantId, quantity: i.quantity })),
           delivery: { name, phone, address, notes: notes || undefined },
           termsAccepted: acceptedTerms,
         }),
@@ -99,15 +118,14 @@ export function CheckoutForm({ isSignedIn, initialEmail, initialName, initialPho
 
       const body = await response.json();
       if (!response.ok) {
+        if (!isSignedIn) useCartStore.getState().replaceAll(checkoutItems);
         setError(body.error ?? "Something went wrong. Please try again.");
         setLoading(false);
         return;
       }
 
-      clearCart();
-      if (userId) {
-        clearCartInDb(userId).catch((err) => console.error("Failed to clear synced cart:", err));
-      }
+      if (isSignedIn) clearCart();
+      clearCartInDb(userId).catch((err) => console.error("Failed to clear synced cart:", err));
       router.push(`/account/orders/${body.orderId}`);
       router.refresh();
     } catch {
