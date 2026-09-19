@@ -6,7 +6,16 @@ import Image from "next/image";
 import { Upload, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function PaymentProofUpload({ orderId, existingUrl }: { orderId: string; existingUrl: string | null }) {
+export function PaymentProofUpload({
+  orderId,
+  existingUrl,
+  onUploaded,
+}: {
+  orderId: string;
+  existingUrl: string | null;
+  /** Fires once, the moment an upload first succeeds — lets a parent (e.g. the checkout success view) gate something on "has proof been attached yet". */
+  onUploaded?: () => void;
+}) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -35,6 +44,7 @@ export function PaymentProofUpload({ orderId, existingUrl }: { orderId: string; 
       return;
     }
     setLocalPreviewUrl(URL.createObjectURL(file));
+    onUploaded?.();
     router.refresh();
   }
 

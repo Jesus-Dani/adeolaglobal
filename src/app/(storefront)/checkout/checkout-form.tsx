@@ -42,6 +42,7 @@ export function CheckoutForm({ isSignedIn, initialEmail, initialName, initialPho
     orderNumber: string;
     subtotal: number;
   } | null>(null);
+  const [proofUploaded, setProofUploaded] = useState(false);
 
   if (items.length === 0 && !completedOrder) {
     return (
@@ -65,24 +66,40 @@ export function CheckoutForm({ isSignedIn, initialEmail, initialName, initialPho
         <div>
           <h2 className="font-display text-display-m text-deep-plum">Order placed: {completedOrder.orderNumber}</h2>
           <p className="mt-2 text-body-m text-muted-foreground">
-            One last step: complete the transfer below, then let us know on WhatsApp so we can confirm your
-            order right away.
+            One last step: complete the transfer below and upload your receipt, then let us know on WhatsApp
+            so we can confirm your order right away.
           </p>
         </div>
 
         <BankTransferDetails amount={completedOrder.subtotal} />
 
-        <a
-          href={whatsappHref(whatsappMessage)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(buttonVariants({ size: "lg" }), "w-full gap-2 bg-[#25D366] uppercase text-label tracking-wide hover:bg-[#1ebe57]")}
-        >
-          <MessageCircle className="size-5" strokeWidth={1.5} />
-          Proceed to WhatsApp
-        </a>
+        <PaymentProofUpload
+          orderId={completedOrder.id}
+          existingUrl={null}
+          onUploaded={() => setProofUploaded(true)}
+        />
 
-        <PaymentProofUpload orderId={completedOrder.id} existingUrl={null} />
+        {proofUploaded ? (
+          <a
+            href={whatsappHref(whatsappMessage)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(buttonVariants({ size: "lg" }), "w-full gap-2 bg-[#25D366] uppercase text-label tracking-wide hover:bg-[#1ebe57]")}
+          >
+            <MessageCircle className="size-5" strokeWidth={1.5} />
+            Proceed to WhatsApp
+          </a>
+        ) : (
+          <div>
+            <Button size="lg" disabled className="w-full gap-2 uppercase text-label tracking-wide">
+              <MessageCircle className="size-5" strokeWidth={1.5} />
+              Proceed to WhatsApp
+            </Button>
+            <p className="mt-2 text-center text-body-s text-muted-foreground">
+              Upload your payment proof above to continue.
+            </p>
+          </div>
+        )}
 
         <Link href="/account/orders" className="text-center text-body-s text-plum hover:underline">
           View all your orders
