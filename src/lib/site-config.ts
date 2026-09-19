@@ -1,11 +1,8 @@
-// Values ADEOLA Global hasn't provided yet — see docs/PRD.md s6 "Dependencies
-// & Open Items". Swap these once real values arrive; nothing else needs to
-// change since components read from here.
 export const siteConfig = {
   name: "ADEOLA Global Ltd",
   tagline: "Nature. Beauty. Creativity.",
-  /** Placeholder, replace with the real business WhatsApp number (E.164, no +). */
-  whatsappNumber: "2348000000000",
+  /** E.164, no +. Local format 08128517589. */
+  whatsappNumber: "2348128517589",
   socialLinks: {
     instagram: null as string | null,
     facebook: null as string | null,
